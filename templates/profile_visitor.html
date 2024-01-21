@@ -1,0 +1,17 @@
+<!-- Similar head section as before -->
+<body>
+    <h1>Visitor Profile</h1>
+    <p>Full Name: {{ visitor.user.FullName }}</p>
+    <p>Username: {{ visitor.user.UserName }}</p>
+    <p>Phone: {{ visitor.PhoneNumber }}</p>
+    <p>Email: {{ visitor.Email }}</p>
+    <p>Address: {{ visitor.Address }}</p>
+    <p>Digital Wallet: {{ visitor.DigitalWallet }}</p>
+    <h2>Purchased Artworks</h2>
+    <ul>
+        {% for artwork in purchased_artworks %}
+            <li><a href="/artwork/{{ artwork.ArtworkID }}">{{ artwork.ATitle }} - {{ artwork.SaleDate }} - {{ artwork.Price }}</a></li>
+        {% endfor %}
+    </ul>
+    <!-- Add form to update visitor info -->
+</body>

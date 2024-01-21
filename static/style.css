@@ -31,7 +31,7 @@ body {
 .content-container {
     margin: 20px;
     padding: 20px;
-    background-color: #f8f8f8;
+    background-color: navajowhite;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     text-align: left;
@@ -86,3 +86,45 @@ body {
 }
 
 /* Additional styling as needed */
+.auth-form-container {
+    max-width: 600px;
+    margin: 200px auto;
+    padding: 100px;
+    background-color: navajowhite;
+    border-radius: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.auth-form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.auth-form-container input[type="text"],
+.auth-form-container input[type="password"],
+.auth-form-container input[type="email"],
+.auth-form-container input[type="number"],
+.auth-form-container textarea,
+.auth-form-container select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.auth-form-container button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: rgb(247, 150, 5);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-form-container button[type="submit"]:hover {
+    background-color: #3949AB;
+}
