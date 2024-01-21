@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+.image-container {
+    background-image: url('/static/images/welcome.jpg');
+    background-size: cover;
+    padding: 0px;
+    color: navy;
+}
+
+.welcome-container {
+    background-color: rgb(227, 95, 23);
+    background-size: cover;
+    padding: 50px;
+    color: navajowhite;
+}
+.welcome-container {
+    background-size: cover;
+    padding: 50px;
+    color: navajowhite;
+}
+
+.navigation a, .directory a {
+    margin: 40px;
+    color: navajowhite;
+    text-decoration: none;
+}
+
+/* Gallery and Exhibition Page Styles */
+.content-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.gallery-list, .exhibition-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.gallery-item, .exhibition-item {
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gallery-item h2, .exhibition-item h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+/* Existing styles */
+
+.artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.artwork-item {
+    text-align: center;
+}
+
+.artwork-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.artwork-details {
+    text-align: center;
+    padding: 20px;
+}
+
+.artwork-details img {
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Additional styling as needed */

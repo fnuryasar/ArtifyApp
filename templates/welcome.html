@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Artify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='images/welcome.jpg') }}" alt="Welcome to Artify">
+    </div>
+    <div class="welcome-container">
+        <h1>Welcome to Artify</h1>
+        <p>Your one-stop destination for exploring and purchasing art.</p>
+        <div class="directory">
+            <a href="/galleries">Galleries</a> | 
+            <a href="/exhibitions">Exhibitions</a> | 
+            <a href="/artworks">Artworks</a> | 
+            <a href="/profile">Profile</a>
+        </div>
+        <div class="navigation">
+            <a href="/signup">Sign Up</a> | <a href="/login">Log In</a>
+        </div>
+    </div>
+    <div class="basket-icon">
+        <!-- Basket icon implementation -->
+    </div>
+    
+</body>
+</html>

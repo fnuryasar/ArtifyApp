@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Artworks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="artwork-grid">
+        {% for artwork in artworks %}
+            <div class="artwork-item">
+                <a href="{{ url_for('artwork_details', artwork_id=artwork.ArtworkID) }}">
+                    <img src="{{ url_for('static', filename='Artworks/' + artwork.ArtworkID|string + '.jpg') }}" alt="{{ artwork.ATitle }}">
+                    <h3>{{ artwork.ATitle }}</h3>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

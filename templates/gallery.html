@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artify Galleries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="content-container">
+        <h1>Art Galleries</h1>
+        <ul class="gallery-list">
+            {% for gallery in galleries %}
+                <li class="gallery-item">
+                    <h2>{{ gallery.GName }}</h2>
+                    <p>{{ gallery.GAddress }}</p>
+                    <!-- Additional gallery details here -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
