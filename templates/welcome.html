@@ -18,6 +18,9 @@
             <a href="/exhibitions">Exhibitions</a> | 
             <a href="/artworks">Artworks</a> | 
             <a href="/profile">Profile</a>
+            {% if session.logged_in %}
+                | <a href="{{ url_for('logout') }}">Log Out</a>
+            {% endif %}
         </div>
         <div class="navigation">
             <a href="/signup">Sign Up</a> | <a href="/login">Log In</a>
