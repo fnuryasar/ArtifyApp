@@ -1,3 +1,4 @@
+<!-- exhibition_list.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,11 @@
         <ul class="exhibition-list">
             {% for exhibition in exhibitions %}
                 <li class="exhibition-item">
-                    <h2>{{ exhibition.ETitle }}</h2>
+                    <h2>
+                        <a href="{{ url_for('exhibition_details', exhibition_id=exhibition.ExhibitionID) }}" class="exhibition-button">
+                            {{ exhibition.ETitle }}
+                        </a>
+                    </h2>
                     <p>{{ exhibition.StartDate }} to {{ exhibition.EndDate }}</p>
                     <!-- Additional exhibition details here -->
                 </li>
