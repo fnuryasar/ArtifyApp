@@ -40,13 +40,30 @@
 
     <div class="artwork-grid">
         {% for artwork in artworks %}
-        <div class="artwork-column">
-            <div class="artwork-item">
-                <a href="{{ url_for('artwork_details', artwork_id=artwork['artwork_id']) }}">
-                    <img src="{{ url_for('static', filename='Artworks/' + artwork['artwork_id']|string + '.jpg') }}"
-                        alt="{{ artwork['artwork_title'] }}">
-                    <h3>{{ artwork['artwork_title'] }}</h3>
-                </a>
+            <div class="artwork-column">
+                <div class="artwork-item">
+                    <a href="{{ url_for('artwork_details', artwork_id=artwork['artwork_id']) }}">
+                        <img src="{{ url_for('static', filename='Artworks/' + artwork['artwork_id']|string + '.jpg') }}" alt="{{ artwork['artwork_title'] }}">
+                          <h3>{{ artwork['artwork_title'] }}</h3>
+                    </a>
+                </div>
+                <div class="artwork-rating">
+                    <p>Average Rating: {{ artwork.average_rating }}</p>
+                </div>
+                <div class="artwork-comments">
+                    {% for comment in artwork.comments %}
+                        <p>
+                            {% if comment.is_artist %}
+                                <a href="{{ url_for('artist_details', artist_id=comment.artist_id) }}" style="color: blue;">
+                                    {{ comment.user_name }}
+                                </a>
+                            {% else %}
+                                {{ comment.user_name }}
+                            {% endif %}:
+                            {{ comment.comment }}
+                        </p>
+                    {% endfor %}
+                </div>
             </div>
             <div class="artwork-rating">
                 <p>Average Rating: {{ artwork.average_rating }}</p>

@@ -1,0 +1,151 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Artist Details</h1>
+    <div>
+        <h2>{{ artist.user.FullName }}</h2>
+        <p><strong>Style:</strong> {{ artist.ArtistStyle }}</p>
+        <p><strong>Bio:</strong> {{ artist.Bio }}</p>
+    </div>
+
+    <h3>Artworks by {{ artist.user.FullName }}</h3>
+    <ul>
+        {% for artwork in artworks %}
+            <li>
+                <a href="{{ url_for('artwork_details', artwork_id=artwork.ArtworkID) }}">
+                    {{ artwork.ATitle }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-header h1 {
+    margin: 0;
+}
+
+.profile-header p {
+    color: #888;
+    margin: 5px 0 20px;
+}
+
+.profile-details, .artwork-list {
+    margin-bottom: 30px;
+}
+
+.profile-details h2, .artwork-list h2 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.profile-details ul, .artwork-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.profile-details ul li, .artwork-list ul li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.artwork-list h2 {
+    margin-top: 0;
+}
+
+.artwork-list ul li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.artwork-list ul li img {
+    max-width: 200px;
+    margin-top: 10px;
+}
+
+/* Additional styling as needed */
+
+/* Update or add other styles for the rest of your pages as needed */
+
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="profile-header">
+        <a href="{{ url_for('welcome') }}" class="button">Go to Welcome Page</a>
+        <h1>{{ artist.user.FullName }}</h1>
+        <p>Discover the unique art and style of this artist.</p>
+    </div>
+    <div class="profile-details">
+        <h2>Artist Details</h2>
+        <ul>
+            <li><span class="label">Full Name:</span> {{ artist.user.FullName }}</li>
+            <li><span class="label">Username:</span> {{ artist.user.UserName }}</li>
+            <li><span class="label">Bio:</span> {{ artist.Bio }}</li>
+            <li><span class="label">Artist Style:</span> {{ artist.ArtistStyle }}</li>
+        </ul>
+    </div>
+    <div class="artwork-list">
+        <h2>Artworks by {{ artist.user.FullName }} in Inventory</h2>
+        <ul>
+            {% if artist.created_artworks %}
+                {% for artwork in artist.created_artworks %}
+                <li>
+                    <strong>Title:</strong> <a href="{{ url_for('artwork_details', artwork_id=artwork.ArtworkID) }}">{{ artwork.ATitle }}</a>
+                    <br>
+                    <strong>Style:</strong> {{ artwork.AStyle }}
+                    <br>
+                    <img src="{{ url_for('static', filename='Artworks/' + artwork.ArtworkID|string + '.jpg') }}" alt="{{ artwork.ATitle }}" style="max-width: 200px;">
+                    <br>
+                    <strong>Description:</strong> {{ artwork.Description }}
+                </li>
+                {% endfor %}
+            {% else %}
+                <li>No artworks available.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+<!-- galleries.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,11 @@
         <ul class="gallery-list">
             {% for gallery in galleries %}
                 <li class="gallery-item">
-                    <h2>{{ gallery.GName }}</h2>
+                    <h2>
+                        <a href="{{ url_for('gallery_details', gallery_id=gallery.GalleryID) }}" class="gallery-button">
+                            {{ gallery.GName }}
+                        </a>
+                    </h2>
                     <p>{{ gallery.GAddress }}</p>
                     <!-- Additional gallery details here -->
                 </li>
