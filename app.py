@@ -9,8 +9,14 @@ from sqlalchemy import func
 from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:252tavsan@localhost/artify'
+app.secret_key = 'some_random_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:merhabalar@localhost/artify'
 db.init_app(app)
+
+connection = mysql.connector.connect(host='localhost',
+                                             database='Artify',
+                                             user='root',
+                                             password='merhabalar') 
 
 @app.route('/')
 def welcome():
@@ -26,8 +32,6 @@ def galleries():
 def gallery_details(gallery_id):
     gallery = Gallery.query.get_or_404(gallery_id)
     return render_template('gallery_details.html', gallery=gallery)
-
-
 
 @app.route('/exhibitions')
 def exhibitions():
@@ -63,6 +67,11 @@ def artwork_details(artwork_id):
     artwork = Artwork.query.get_or_404(artwork_id)
     return render_template('artwork_details.html', artwork=artwork)
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the user's session
+    return redirect(url_for('welcome'))
+
 @app.route('/profile')
 def profile():
     if not session.get('logged_in'):
@@ -71,15 +80,56 @@ def profile():
     user_id = session.get('user_id')
     user = User.query.get_or_404(user_id)
 
+    user.is_artist = check_user_id(user_id) 
+
+    cursor = connection.cursor()
+    cursor.execute("UPDATE Artwork SET VisitorID = 3, IsSold = 1 WHERE ArtworkID = 5")
+    cursor.close()
+
+    cursor = connection.cursor()
+
+    if user.is_artist:
+        cursor.execute("""
+            SELECT Artwork.* FROM Artwork
+            JOIN Create ON Artwork.ArtworkID = Create.ArtworkID
+            JOIN Artist ON Create.ArtistID = Artist.ArtistID
+            WHERE Create.ArtistID = %s
+        """, (user_id,))
+        artworks = cursor.fetchall()
+    else:
+        cursor.execute("SELECT Artwork.* FROM Artwork WHERE VisitorID = %s", (user_id,))
+        purchased_artworks = cursor.fetchall()
+    
+    cursor.close()
+    #print(purchased_artworks)
+
     if user.is_artist:  # Assuming you have a method to determine if user is an artist
         artist = Artist.query.get(user_id)
-        artworks = Artwork.query.filter_by(ArtistId=user_id).all()
-        return render_template('profile_artist.html', artist=artist, artworks=artworks)
+        #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
+        return render_template('profile_artist.html', user=user, artworks=artworks)
     else:
         visitor = Visitor.query.get(user_id)
-        purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
-        return render_template('profile_visitor.html', visitor=visitor, purchased_artworks=purchased_artworks)
+        #purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
+        return render_template('profile_visitor.html', user=user, visitor=visitor, purchased_artworks=purchased_artworks)
 
+def check_user_id(user_id):
+    query_visitor = "SELECT VisitorID FROM Visitor"
+    query_artist = "SELECT ArtistID FROM Artist"
+    
+    cursor = connection.cursor()
+    cursor.execute(query_visitor)
+    visitor_ids = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute(query_artist)
+    artist_ids = [row[0] for row in cursor.fetchall()]
+
+    if user_id in artist_ids:
+        return True
+    else:
+        return False 
+
+    cursor.close()
+    
 @app.route('/profile/update', methods=['GET', 'POST'])
 def update_profile():
     # Implement logic to update user profile
@@ -141,6 +191,33 @@ def signup():
 
     return render_template('signup.html')
 
+@app.route('/execute-python-function', methods=['POST'])
+def execute_python_function():
+    user_id = session.get('user_id')
+    
+    result = your_python_function(user_id)  
+    
+    return result
+
+# Define your Python function
+def your_python_function(user_id):
+    # Your Python function logic here
+    cursor = connection.cursor()
+    query = """
+    SELECT Artwork.ATitle, COUNT(*)
+    FROM Artwork , Visitor 
+    WHERE Visitor.VisitorID = %s  
+        AND Artwork.VisitorID = Visitor.VisitorID
+    GROUP BY Artwork.ArtworkID
+    ORDER BY COUNT(*) DESC
+    """
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchone()
+    #print(type(result))
+    result = result[0]
+    #print(type(result))
+    cursor.close()
+    return result
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(debug=True)
