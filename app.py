@@ -8,13 +8,15 @@ from flask import Flask, render_template, redirect, url_for, request, session
 
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:bateman35@localhost/artify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/artify'
 db.init_app(app)
 
 connection = mysql.connector.connect(host='localhost',
                                              database='Artify',
                                              user='root',
-                                             password='bateman35') 
+                                             password='admin') 
+##### END APP CONFIGURATION #####
+
 
 @app.route('/')
 def welcome():
@@ -34,13 +36,104 @@ def exhibitions():
 
 @app.route('/artworks')
 def artworks():
-    all_artworks = Artwork.query.all()
-    return render_template('artworks.html', artworks=all_artworks)
+    artworks_data = []
+    artworks = Artwork.query.all()
 
+    for artwork in artworks:
+        artwork_id = artwork.ArtworkID
+        artwork_title = artwork.ATitle
+        average_rating = Review.query.with_entities(func.round(func.avg(Review.Rating),1)).filter(Review.ArtworkID == artwork_id).scalar()
+        # comments = db.session.query(User.UserName, Review_Comments.Comment).join(Review_Comments, User.UId == Review_Comments.UserID).filter(Review_Comments.ArtworkID == artwork_id).all()
+        comments = db.session.query(Review_Comments, User, Artist).join(User, Review_Comments.UserID == User.UId).outerjoin(Artist, User.UId == Artist.ArtistId).filter(Review_Comments.ArtworkID == artwork.ArtworkID).all()
+
+        formatted_comments = []
+        for comment, user, artist in comments:
+            is_artist = artist is not None
+
+            comment_data = {
+                'user_name': user.FullName,
+                'comment': comment.Comment,
+                'is_artist': is_artist
+            }
+
+            # Include artist ID if the commenter is an artist
+            if is_artist:
+                comment_data['artist_id'] = artist.ArtistId
+
+            formatted_comments.append(comment_data)
+        artworks_data.append({
+            'artwork_id': artwork_id,
+            'artwork_title': artwork_title,
+            'average_rating': average_rating,
+            'comments': formatted_comments
+        })
+    
+    basket_ids = session.get('basket', [])
+    basket_artwork_details = get_basket_artwork_details(basket_ids)
+    total_price = sum(artwork['Price'] for artwork in basket_artwork_details)
+
+
+    return render_template('artworks.html', 
+                           artworks=artworks_data, 
+                           basket_artworks=basket_artwork_details, 
+                           total_price=total_price)
+## Artist Details Page:
+# SELECT FullName, UserName, Style, Bio FROM Artist, User WHERE Artist.ArtistID = artist_id AND User.UId = artist_id;
+# SELECT ATitle, AStyle, Image, Description FROM Artwork WHERE ArtworkID IN (SELECT ArtworkID FROM CreateArt WHERE ArtistID = artist_id);
+@app.route('/artist/<int:artist_id>')
+def artist_details(artist_id):
+    artist = Artist.query.join(User, Artist.ArtistId == User.UId).filter(Artist.ArtistId == artist_id).first()
+    artworks = Artwork.query.join(CreateArt).filter(CreateArt.c.ArtistID == artist_id).all()
+
+    if not artist:
+        return "Artist not found", 404
+
+    return render_template('artist_details.html', artist=artist, artworks=artworks)
+
+## Artwork Details Page:
+# SELECT * FROM Artwork WHERE ArtworkID = artwork_id;
+# If IsSold = 1, SELECT UserName, SaleDate FROM User,Artwork WHERE UId = VisitorID AND ArtworkID = artwork_id); 
+# If IsSold = 0, Add to Basket Button
+# SELECT GName FROM Gallery WHERE GalleryID = (SELECT Gallery FROM Artwork WHERE ArtworkID = artwork_id);
+# SELECT UserName FROM User WHERE UId IN (SELECT UId FROM CreateArt WHERE ArtworkID = artwork_id); 
+# SELECT ETitle FROM Exhibition WHERE ExhibitionID IN (SELECT ExhibitionID FROM Display WHERE ArtworkID = artwork_id); 
 @app.route('/artwork/<int:artwork_id>')
 def artwork_details(artwork_id):
     artwork = Artwork.query.get_or_404(artwork_id)
     return render_template('artwork_details.html', artwork=artwork)
+
+
+@app.route('/add_to_basket', methods=['POST'])
+def add_to_basket():
+    artwork_id = request.form.get('artwork_id')
+    if 'basket' not in session:
+        session['basket'] = []
+
+    # Check if the artwork_id is not already in the basket
+    if artwork_id not in session['basket']:
+        session['basket'].append(artwork_id)
+
+    # Mark the session as modified
+    session.modified = True
+
+    return redirect(url_for('artworks'))
+
+
+@app.route('/add_to_basket', methods=['POST'])
+def add_to_basket():
+    artwork_id = request.form.get('artwork_id')
+    if 'basket' not in session:
+        session['basket'] = []
+
+    # Check if the artwork_id is not already in the basket
+    if artwork_id not in session['basket']:
+        session['basket'].append(artwork_id)
+
+    # Mark the session as modified
+    session.modified = True
+
+    return redirect(url_for('artworks'))
+
 
 @app.route('/logout')
 def logout():
@@ -167,6 +260,61 @@ def signup():
         return redirect(url_for('login'))
 
     return render_template('signup.html')
+
+@app.route('/execute-python-function', methods=['POST'])
+def execute_python_function():
+    user_id = session.get('user_id')
+    basketed_artwork_ids = session.get('basket', [])
+    
+    result = your_python_function(user_id)  
+    
+    return result
+
+# Define your Python function
+def your_python_function(user_id):
+    # Your Python function logic here
+    cursor = connection.cursor()
+    query = """
+    SELECT Artwork.ATitle, COUNT(*)
+    FROM Artwork , Visitor 
+    WHERE Visitor.VisitorID = %s  
+        AND Artwork.VisitorID = Visitor.VisitorID
+    GROUP BY Artwork.ArtworkID
+    ORDER BY COUNT(*) DESC
+    """
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchone()
+    #print(type(result))
+    result = result[0]
+    #print(type(result))
+    cursor.close()
+    return result
+
+@app.route('/view_basket')
+def view_basket():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('login'))
+
+    basket_artwork_details = get_basket_artwork_details(session.get('basket', []))
+    total_price = sum(artwork['Price'] for artwork in basket_artwork_details)
+
+    return render_template('basket.html', basket_artworks=basket_artwork_details, total_price=total_price)
+
+def get_basket_artwork_details(basket_ids):
+    if not basket_ids:
+        return []
+
+    query = """
+SELECT ATitle, Price FROM Artwork
+WHERE ArtworkID IN (%s)
+""" % ','.join(['%s'] * len(basket_ids))
+
+
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, basket_ids)
+    artworks = cursor.fetchall()
+    cursor.close()
+    return artworks
 
 
 if __name__ == '__main__':

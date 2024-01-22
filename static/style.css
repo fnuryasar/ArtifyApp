@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
 }
+
 .image-container {
     background-image: url('/static/images/welcome.jpg');
     background-size: cover;
@@ -15,13 +16,15 @@ body {
     padding: 50px;
     color: navajowhite;
 }
+
 .welcome-container {
     background-size: cover;
     padding: 50px;
     color: navajowhite;
 }
 
-.navigation a, .directory a {
+.navigation a,
+.directory a {
     margin: 40px;
     color: navajowhite;
     text-decoration: none;
@@ -33,45 +36,133 @@ body {
     padding: 20px;
     background-color: navajowhite;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
 }
 
-.gallery-list, .exhibition-list {
+.gallery-list,
+.exhibition-list {
     list-style-type: none;
     padding: 0;
 }
 
-.gallery-item, .exhibition-item {
+.gallery-item,
+.exhibition-item {
     background-color: #ffffff;
     margin-bottom: 20px;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.gallery-item h2, .exhibition-item h2 {
+.gallery-item h2,
+.exhibition-item h2 {
     color: #333;
     margin-top: 0;
 }
 
-/* Existing styles */
+.basket-view {
+    position: fixed;
+    color: rgb(227, 95, 23);
+    bottom: 10px;
+    right: 10px;
+    width: 500px;
+    height: auto;
+    background-color: rgba(255, 255, 255, 0.6);
+    /* Transparency set here */
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 10px;
+    z-index: 100;
+    max-height: 400px;
+    /* Adjust as needed */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+}
+
+.basket-items {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.basket-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.basket-artwork-thumbnail {
+    width: 50px;
+    /* Or any size that fits well in your basket layout */
+    height: auto;
+    /* Maintain the aspect ratio of the image */
+    border-radius: 5px;
+    /* Optional: for rounded corners */
+    object-fit: cover;
+    /* This ensures the images cover the area without stretching; could also use 'contain' if you want to see the whole image */
+}
+
+
+.basket-artwork-details {
+    flex-grow: 1;
+}
+
+.basket-artwork-title {
+    font-weight: bold;
+}
+
+.basket-artwork-price {
+    /* Styling for price */
+}
+
+.basket-summary {
+    margin-top: 10px;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.basket-actions {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.basket-actions button {
+    padding: 8px 16px;
+    /* Rest of the button styling */
+}
 
 .artwork-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    /* Three columns */
     gap: 20px;
-    padding: 20px;
+    align-items: start;
+    /* Aligns content at the top */
 }
 
-.artwork-item {
-    text-align: center;
+.artwork-column {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    /* Three rows: image, rating, comments */
+    gap: 10px;
 }
 
 .artwork-item img {
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    max-height: 1000px;
+    /* Maximum height for the image */
+    object-fit: cover;
+    /* Resize image to fill the container */
+}
+
+.artwork-rating,
+.artwork-comments {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .artwork-details {
@@ -94,6 +185,7 @@ body {
     border-radius: 50px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .auth-form-container label {
     display: block;
     margin-bottom: 5px;
@@ -113,6 +205,7 @@ body {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
 .auth-form-container button[type="submit"] {
     width: 100%;
     padding: 10px;
