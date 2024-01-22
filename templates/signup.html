@@ -10,6 +10,13 @@
     <div class="auth-form-container">
         <form action="{{ url_for('signup') }}" method="post" id="signupForm">
             <div>
+                <label>User Type:</label>
+                <select name="user_type" id="userType">
+                    <option value="Visitor">Visitor</option>
+                    <option value="Artist">Artist</option>
+                </select>
+            </div>
+            <div>
                 <label>Full Name:</label>
                 <input type="text" name="fullname" required>
             </div>
@@ -20,13 +27,6 @@
             <div>
                 <label>Password:</label>
                 <input type="password" name="password" required>
-            </div>
-            <div>
-                <label>User Type:</label>
-                <select name="user_type" id="userType">
-                    <option value="Visitor">Visitor</option>
-                    <option value="Artist">Artist</option>
-                </select>
             </div>
             <div id="additionalFields"></div>
             <button type="submit">Sign Up</button>

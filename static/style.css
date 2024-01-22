@@ -12,17 +12,17 @@ body {
 .welcome-container {
     background-color: rgb(227, 95, 23);
     background-size: cover;
-    padding: 50px;
+    padding: 60px;
     color: navajowhite;
 }
 .welcome-container {
     background-size: cover;
-    padding: 50px;
+    padding: 55px;
     color: navajowhite;
 }
 
 .navigation a, .directory a {
-    margin: 40px;
+    margin: 50px;
     color: navajowhite;
     text-decoration: none;
 }
