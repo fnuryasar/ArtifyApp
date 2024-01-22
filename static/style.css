@@ -55,25 +55,6 @@ body {
     margin-top: 0;
 }
 
-/* Existing styles */
-
-/* .artwork-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 20px;
-}
-
-.artwork-item {
-    text-align: center;
-}
-
-.artwork-item img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-} */
-
 
 .artwork-grid {
     display: grid;
@@ -111,7 +92,7 @@ body {
 }
 
 
-.artwork-details {
+/* .artwork-details {
     text-align: center;
     padding: 20px;
 }
@@ -120,7 +101,31 @@ body {
     width: 50%;
     height: auto;
     border-radius: 8px;
+} */
+
+.artwork-detail-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
+
+.artwork-detail-container img.artwork-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.artwork-detail-container p {
+    text-align: left;
+    line-height: 1.6;
+}
+
+/* Further styling as needed */
+
 
 /* Additional styling as needed */
 .auth-form-container {
@@ -165,3 +170,4 @@ body {
 .auth-form-container button[type="submit"]:hover {
     background-color: #3949AB;
 }
+
