@@ -9,13 +9,13 @@ from flask import Flask, render_template, redirect, url_for, request, session
 
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:bateman35@localhost/artify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:merhabalar@localhost/artify'
 db.init_app(app)
 
 connection = mysql.connector.connect(host='localhost',
                                              database='Artify',
                                              user='root',
-                                             password='bateman35') 
+                                             password='merhabalar') 
 
 @app.route('/')
 def welcome():
