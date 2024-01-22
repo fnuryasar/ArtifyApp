@@ -6,7 +6,7 @@ from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist
 from flask import Flask, render_template, redirect, url_for, request, session
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:252tavsan@localhost/artify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/artify'
 db.init_app(app)
 
 @app.route('/')
@@ -19,7 +19,7 @@ def galleries():
     galleries = Gallery.query.all()
     return render_template('gallery.html', galleries=galleries)
 
-@app.route('/gallery/<int:gallery_id>')
+@app.route('/galleries/<int:gallery_id>')
 def gallery_details(gallery_id):
     gallery = Gallery.query.get_or_404(gallery_id)
     return render_template('gallery_details.html', gallery=gallery)
