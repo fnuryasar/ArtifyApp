@@ -1,13 +1,15 @@
+##### START IMPORTS #####
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
 import pymysql
 import mysql.connector
 pymysql.install_as_MySQLdb()
 from sqlalchemy import func 
+from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments, CreateArt, Display, Schedule
+##### END IMPORTS #####
 
-from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments, CreateArt
 
+##### START APP CONFIGURATION #####
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:merhabalar@localhost/artify'
@@ -17,34 +19,56 @@ connection = mysql.connector.connect(host='localhost',
                                              database='Artify',
                                              user='root',
                                              password='merhabalar') 
+##### END APP CONFIGURATION #####
 
+
+##### START ROUTES #####
+## Welcome Page: 
+# no query
 @app.route('/')
 def welcome():
     return render_template('welcome.html')
 
+## Gallery Page: 
+# SELECT GName, GAddress FROM Gallery;
 @app.route('/galleries')
 def galleries():
     # Fetch gallery data from the database
     galleries = Gallery.query.all()
     return render_template('gallery.html', galleries=galleries)
 
+## Gallery Details Page: 
+# SELECT GName, GAddress FROM Gallery WHERE GalleryID = gallery_id; 
+# SELECT ClosedDay FROM ClosedDays WHERE GalleryID = gallery_id;
+# SELECT ATitle FROM Artwork WHERE Gallery = gallery_id;
+# SELECT ETitle FROM Exhibition WHERE ExhibitionID IN (SELECT ExhibitionID FROM Schedule WHERE GalleryID = gallery_id);
 @app.route('/gallery/<int:gallery_id>')
 def gallery_details(gallery_id):
     gallery = Gallery.query.get_or_404(gallery_id)
     return render_template('gallery_details.html', gallery=gallery)
 
+## Exhibition Page:
+# SELECT ETitle, StartDate, EndDate FROM Exhibition;
 @app.route('/exhibitions')
 def exhibitions():
     # Fetch exhibition data from database
     exhibitions = Exhibition.query.all()
     return render_template('exhibition.html', exhibitions=exhibitions)
 
+## Exhibition Details Page:
+# SELECT ETitle, StartDate, EndDate, Location FROM Exhibition WHERE ExhibitionID = exhibition_id;
+# SELECT GName FROM Gallery WHERE GalleryID IN (SELECT GalleryID FROM Schedule WHERE ExhibitionID = exhibition_id);
+# SELECT ATitle FROM Artwork WHERE ArtworkID IN (SELECT ArtworkID FROM Display WHERE ExhibitionID = exhibition_id);
 @app.route('/exhibition/<int:exhibition_id>')
 def exhibition_details(exhibition_id):
     exhibition = Exhibition.query.get_or_404(exhibition_id)
     return render_template('exhibition_details.html', exhibition=exhibition)
 
-
+## Artwork Page:
+# SELECT Image, ATitle FROM Artwork;
+# SELECT AVG(Rating) FROM Artwork, Review WHERE Artwork.ArtworkID = Review.ArtworkID GROUP BY Artwork.ArtworkID;
+# SELECT UserName, Comment FROM Review_Comments, User WHERE Review_Comments.UserID = User.UId AND Review_Comments.ArtworkID = artwork_id;
+# Blue Labels --> SELECT Review_Comments, User, Artist FROM Review_Comments JOIN User ON Review_Comments.UserID = User.UId LEFT JOIN Artist ON User.UId = Artist.ArtistId WHERE Review_Comments.ArtworkID = artwork_id;
 @app.route('/artworks')
 def artworks():
     artworks_data = []
@@ -62,7 +86,7 @@ def artworks():
             is_artist = artist is not None
 
             comment_data = {
-                'user_name': user.UserName,
+                'user_name': user.FullName,
                 'comment': comment.Comment,
                 'is_artist': is_artist
             }
@@ -83,6 +107,9 @@ def artworks():
 
     return render_template('artworks.html', artworks=artworks_data)
 
+## Artist Details Page:
+# SELECT FullName, UserName, Style, Bio FROM Artist, User WHERE Artist.ArtistID = artist_id AND User.UId = artist_id;
+# SELECT ATitle, AStyle, Image, Description FROM Artwork WHERE ArtworkID IN (SELECT ArtworkID FROM CreateArt WHERE ArtistID = artist_id);
 @app.route('/artist/<int:artist_id>')
 def artist_details(artist_id):
     artist = Artist.query.join(User, Artist.ArtistId == User.UId).filter(Artist.ArtistId == artist_id).first()
@@ -93,11 +120,28 @@ def artist_details(artist_id):
 
     return render_template('artist_details.html', artist=artist, artworks=artworks)
 
-
+## Artwork Details Page:
+# SELECT * FROM Artwork WHERE ArtworkID = artwork_id;
+# If IsSold = 1, SELECT UserName, SaleDate FROM User,Artwork WHERE UId = VisitorID AND ArtworkID = artwork_id); 
+# If IsSold = 0, Add to Basket Button
+# SELECT GName FROM Gallery WHERE GalleryID = (SELECT Gallery FROM Artwork WHERE ArtworkID = artwork_id);
+# SELECT UserName FROM User WHERE UId IN (SELECT UId FROM CreateArt WHERE ArtworkID = artwork_id); 
+# SELECT ETitle FROM Exhibition WHERE ExhibitionID IN (SELECT ExhibitionID FROM Display WHERE ArtworkID = artwork_id); 
 @app.route('/artwork/<int:artwork_id>')
 def artwork_details(artwork_id):
     artwork = Artwork.query.get_or_404(artwork_id)
-    return render_template('artwork_details.html', artwork=artwork)
+    gallery = Gallery.query.get(artwork.Gallery)
+    
+    artist_details = db.session.query(User.UId, User.FullName)\
+                        .join(CreateArt, User.UId == CreateArt.c.ArtistID)\
+                        .filter(CreateArt.c.ArtworkID == artwork_id).all()
+
+    exhibition_titles = Exhibition.query.join(Display).filter(Display.c.ArtworkID == artwork_id).all()
+    sold_info = None
+    if artwork.IsSold:
+        sold_info = User.query.get(artwork.VisitorID)
+
+    return render_template('artwork_details.html', artwork=artwork, gallery=gallery, artist_details=artist_details, exhibition_titles=exhibition_titles, sold_info=sold_info)
 
 @app.route('/logout')
 def logout():
