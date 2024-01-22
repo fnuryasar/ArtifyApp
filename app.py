@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 import mysql.connector
+from flask import jsonify
 pymysql.install_as_MySQLdb()
 from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist
 from flask import Flask, render_template, redirect, url_for, request, session
@@ -76,7 +77,7 @@ def profile():
         purchased_artworks = cursor.fetchall()
     
     cursor.close()
-    print(purchased_artworks)
+    #print(purchased_artworks)
 
     if user.is_artist:  # Assuming you have a method to determine if user is an artist
         artist = Artist.query.get(user_id)
@@ -167,6 +168,34 @@ def signup():
         return redirect(url_for('login'))
 
     return render_template('signup.html')
+
+@app.route('/execute-python-function', methods=['POST'])
+def execute_python_function():
+    user_id = session.get('user_id')
+    
+    result = your_python_function(user_id)  
+    
+    return result
+
+# Define your Python function
+def your_python_function(user_id):
+    # Your Python function logic here
+    cursor = connection.cursor()
+    query = """
+    SELECT Artwork.ATitle, COUNT(*)
+    FROM Artwork , Visitor 
+    WHERE Visitor.VisitorID = %s  
+        AND Artwork.VisitorID = Visitor.VisitorID
+    GROUP BY Artwork.ArtworkID
+    ORDER BY COUNT(*) DESC
+    """
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchone()
+    #print(type(result))
+    result = result[0]
+    #print(type(result))
+    cursor.close()
+    return result
 
 
 if __name__ == '__main__':
