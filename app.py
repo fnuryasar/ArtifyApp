@@ -6,7 +6,7 @@ from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist
 from flask import Flask, render_template, redirect, url_for, request, session
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/artify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:252tavsan@localhost/artify'
 db.init_app(app)
 
 @app.route('/')
