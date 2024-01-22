@@ -1,11 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
+
 import pymysql
 import mysql.connector
-from flask import jsonify
 pymysql.install_as_MySQLdb()
-from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist
-from flask import Flask, render_template, redirect, url_for, request, session
+from sqlalchemy import func 
+
+from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments
 
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
@@ -35,8 +36,20 @@ def exhibitions():
 
 @app.route('/artworks')
 def artworks():
-    all_artworks = Artwork.query.all()
-    return render_template('artworks.html', artworks=all_artworks)
+    artworks_data = []
+    artworks = Artwork.query.all()
+
+    for artwork in artworks:
+        artwork_id = artwork.ArtworkID
+        average_rating = Review.query.with_entities(func.avg(Review.Rating)).filter(Review.ArtworkID == artwork_id).scalar()
+        comments = db.session.query(User.UserName, Review_Comments.Comment).join(Review_Comments, User.UId == Review_Comments.UserID).filter(Review_Comments.ArtworkID == artwork_id).all()
+        artworks_data.append({
+            'artwork_id': artwork_id,
+            'average_rating': average_rating,
+            'comments': comments
+        })
+
+    return render_template('artwork.html', artworks=artworks_data)
 
 @app.route('/artwork/<int:artwork_id>')
 def artwork_details(artwork_id):
