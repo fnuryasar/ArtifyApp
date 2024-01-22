@@ -57,7 +57,7 @@ body {
 
 /* Existing styles */
 
-.artwork-grid {
+/* .artwork-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -72,7 +72,44 @@ body {
     width: 100%;
     height: auto;
     border-radius: 8px;
+} */
+
+
+.artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Three columns */
+    gap: 20px;
+    align-items: start; /* Aligns content at the top */
 }
+
+.artwork-column {
+    display: grid;
+    grid-template-rows: auto auto 1fr; /* Three rows: image, rating, comments */
+    gap: 10px;
+}
+
+.artwork-item img {
+    width: 100%;
+    height: auto;
+    max-height: 1000px; /* Maximum height for the image */
+    object-fit: cover; /* Resize image to fill the container */
+}
+
+.artwork-rating, .artwork-comments {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.artwork-comments ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.artwork-comments li {
+    margin-bottom: 5px;
+}
+
 
 .artwork-details {
     text-align: center;
