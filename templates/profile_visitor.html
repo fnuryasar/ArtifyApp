@@ -51,7 +51,7 @@
     .artwork-list {
         padding: 0;
     }
-    .artwork-list h3 {
+    .artwork-list h2 {
         margin-top: 0;
     }
     .artwork-list ul {
@@ -67,39 +67,42 @@
 <body>
 <div class="container">
     <div class="profile-header">
-        <h1>Visitor Profile</h1>
+        <h1>{{ profile_title }}</h1>
         <p>Explore the artworks you love!</p>
     </div>
     <a href="{{ url_for('welcome') }}" class="button">Go to Welcome Page</a>
     <div class="profile-details">
         <h2>Personal Details</h2>
         <ul>
-            <li><span class="label">Full Name:</span> David Smith</li>
-            <li><span class="label">Username:</span> DSmith</li>
-            <li><span class="label">Phone:</span> 555-1001-003</li>
-            <li><span class="label">Email:</span> david.smith@email.com</li>
-            <li><span class="label">Address:</span> 789 Pine Road, Greensville</li>
-            <li><span class="label">Digital Wallet:</span> 550000</li>
+            <li><span class="label">Full Name:</span> {{ user.FullName }}</li>
+            <li><span class="label">Username:</span> {{ user.UserName }}</li>
+            <li><span class="label">Phone:</span> {{ visitor.PhoneNumber }}</li>
+            <li><span class="label">Email:</span> {{ visitor.Email }}</li>
+            <li><span class="label">Address:</span> {{ visitor.Address }}</li>
+            <li><span class="label">Digital Wallet:</span> {{ user.DigitalWallet }}</li>
         </ul>
     </div>
     <div class="artwork-list">
         <h2>Purchased Artworks</h2>
         <ul>
-            {% for artwork in user_purchased_artworks %}
-            <li>
-                <strong>Title:</strong> {{ artwork.Title }}
-                <br>
-                <strong>Category:</strong> {{ artwork.Category }}
-                <br>
-                <img src="{{ artwork.Image }}" alt="{{ artwork.Title }}" style="width:100px; height:auto;">
-                <br>
-                <strong>Description:</strong> {{ artwork.Description }}
-            </li>
+            {% if purchased_artworks %}
+                {% for artwork in purchased_artworks %}
+                <li>
+                    <strong>Title:</strong> {{ artwork[1] }}
+                    <br>
+                    <strong>Style:</strong> {{ artwork[2] }}
+                    <br>
+                    <img src="{{ url_for('static', filename='Artworks/' + artwork[0]|string + '.jpg') }}" alt="{{ artwork[1] }}">
+                    <br>
+                    <strong>Description:</strong> {{ artwork[5] }}
+                </li>
+                {% endfor %}
             {% else %}
-            <li>No artworks purchased yet.</li>
-            {% endfor %}
+                <li>No artworks purchased yet.</li>
+            {% endif %}
         </ul>
     </div>
 </div>
 </body>
 </html>
+

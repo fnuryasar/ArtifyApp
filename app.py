@@ -58,6 +58,10 @@ def profile():
     user.is_artist = check_user_id(user_id) 
 
     cursor = connection.cursor()
+    cursor.execute("UPDATE Artwork SET VisitorID = 3, IsSold = 1 WHERE ArtworkID = 5")
+    cursor.close()
+
+    cursor = connection.cursor()
 
     if user.is_artist:
         cursor.execute("""
@@ -68,19 +72,22 @@ def profile():
         """, (user_id,))
         artworks = cursor.fetchall()
     else:
-        cursor.execute("SELECT * FROM Artwork WHERE VisitorID = %s", (user_id,))
+        cursor.execute("SELECT Artwork.* FROM Artwork WHERE VisitorID = %s", (user_id,))
         purchased_artworks = cursor.fetchall()
     
     cursor.close()
+    print(purchased_artworks)
 
     if user.is_artist:  # Assuming you have a method to determine if user is an artist
         artist = Artist.query.get(user_id)
         #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
-        return render_template('profile_artist.html', artist=artist, artworks=artworks)
+        return render_template('profile_artist.html', user=user, artworks=artworks)
     else:
         visitor = Visitor.query.get(user_id)
         #purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
-        return render_template('profile_visitor.html', visitor=visitor, purchased_artworks=purchased_artworks)
+        return render_template('profile_visitor.html', user=user, visitor=visitor, purchased_artworks=purchased_artworks)
+
+    
 
 def check_user_id(user_id):
     query_visitor = "SELECT VisitorID FROM Visitor"
