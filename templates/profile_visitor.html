@@ -58,6 +58,11 @@
         list-style: none;
         padding: 0;
     }
+    .artwork-list img {
+        height: 200px; /* Set the desired height for the images */
+        object-fit: cover; /* Maintain aspect ratio and fill the container */
+    }
+
     .artwork-list ul li {
         padding: 10px 0;
         border-bottom: 1px solid #eee;
@@ -106,11 +111,11 @@
 </body>
 </html>
 
-<body>
+<!-- <body>
     <h1>Click the button to get the most bought artwork from this user's inventory</h1>
     <button id="executeButton">Execute</button>
 
-    <!-- Notification Pane -->
+    Notification Pane
     <div id="notificationPane" style="display:none; position:fixed; top:20px; right:20px; background:lightgrey; padding:15px; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
         <span id="notificationMessage"></span>
         <button onclick="document.getElementById('notificationPane').style.display='none'">Close</button>
@@ -137,5 +142,4 @@
         });
     </script>
     
-    
-</body>
+</body> -->
