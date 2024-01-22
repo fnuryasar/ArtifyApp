@@ -42,6 +42,11 @@ def artwork_details(artwork_id):
     artwork = Artwork.query.get_or_404(artwork_id)
     return render_template('artwork_details.html', artwork=artwork)
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the user's session
+    return redirect(url_for('welcome'))
+
 @app.route('/profile')
 def profile():
     if not session.get('logged_in'):
