@@ -6,7 +6,7 @@ import mysql.connector
 pymysql.install_as_MySQLdb()
 from sqlalchemy import func 
 
-from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments
+from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Review, Review_Comments, CreateArt
 
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
@@ -52,15 +52,47 @@ def artworks():
 
     for artwork in artworks:
         artwork_id = artwork.ArtworkID
-        average_rating = Review.query.with_entities(func.avg(Review.Rating)).filter(Review.ArtworkID == artwork_id).scalar()
-        comments = db.session.query(User.UserName, Review_Comments.Comment).join(Review_Comments, User.UId == Review_Comments.UserID).filter(Review_Comments.ArtworkID == artwork_id).all()
+        artwork_title = artwork.ATitle
+        average_rating = Review.query.with_entities(func.round(func.avg(Review.Rating),1)).filter(Review.ArtworkID == artwork_id).scalar()
+        # comments = db.session.query(User.UserName, Review_Comments.Comment).join(Review_Comments, User.UId == Review_Comments.UserID).filter(Review_Comments.ArtworkID == artwork_id).all()
+        comments = db.session.query(Review_Comments, User, Artist).join(User, Review_Comments.UserID == User.UId).outerjoin(Artist, User.UId == Artist.ArtistId).filter(Review_Comments.ArtworkID == artwork.ArtworkID).all()
+
+        formatted_comments = []
+        for comment, user, artist in comments:
+            is_artist = artist is not None
+
+            comment_data = {
+                'user_name': user.UserName,
+                'comment': comment.Comment,
+                'is_artist': is_artist
+            }
+
+            # Include artist ID if the commenter is an artist
+            if is_artist:
+                comment_data['artist_id'] = artist.ArtistId
+
+            formatted_comments.append(comment_data)
         artworks_data.append({
             'artwork_id': artwork_id,
+            'artwork_title': artwork_title,
             'average_rating': average_rating,
-            'comments': comments
+            'comments': formatted_comments
         })
+    
+    
 
-    return render_template('artwork.html', artworks=artworks_data)
+    return render_template('artworks.html', artworks=artworks_data)
+
+@app.route('/artist/<int:artist_id>')
+def artist_details(artist_id):
+    artist = Artist.query.join(User, Artist.ArtistId == User.UId).filter(Artist.ArtistId == artist_id).first()
+    artworks = Artwork.query.join(CreateArt).filter(CreateArt.c.ArtistID == artist_id).all()
+
+    if not artist:
+        return "Artist not found", 404
+
+    return render_template('artist_details.html', artist=artist, artworks=artworks)
+
 
 @app.route('/artwork/<int:artwork_id>')
 def artwork_details(artwork_id):
