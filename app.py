@@ -1,13 +1,20 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
+import mysql.connector
 pymysql.install_as_MySQLdb()
 from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist
 from flask import Flask, render_template, redirect, url_for, request, session
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:merhabalar@localhost/artify'
+app.secret_key = 'some_random_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:bateman35@localhost/artify'
 db.init_app(app)
+
+connection = mysql.connector.connect(host='localhost',
+                                             database='Artify',
+                                             user='root',
+                                             password='bateman35') 
 
 @app.route('/')
 def welcome():
@@ -43,14 +50,50 @@ def profile():
     user_id = session.get('user_id')
     user = User.query.get_or_404(user_id)
 
+    user.is_artist = check_user_id(user_id) 
+
+    cursor = connection.cursor()
+
+    if user.is_artist:
+        cursor.execute("""
+            SELECT Artwork.* FROM Artwork
+            JOIN Create ON Artwork.ArtworkID = Create.ArtworkID
+            JOIN Artist ON Create.ArtistID = Artist.ArtistID
+            WHERE Create.ArtistID = %s
+        """, (user_id,))
+        artworks = cursor.fetchall()
+    else:
+        cursor.execute("SELECT * FROM Artwork WHERE VisitorID = %s", (user_id,))
+        purchased_artworks = cursor.fetchall()
+    
+    cursor.close()
+
     if user.is_artist:  # Assuming you have a method to determine if user is an artist
         artist = Artist.query.get(user_id)
-        artworks = Artwork.query.filter_by(ArtistId=user_id).all()
+        #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
         return render_template('profile_artist.html', artist=artist, artworks=artworks)
     else:
         visitor = Visitor.query.get(user_id)
-        purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
+        #purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
         return render_template('profile_visitor.html', visitor=visitor, purchased_artworks=purchased_artworks)
+
+def check_user_id(user_id):
+    query_visitor = "SELECT VisitorID FROM Visitor"
+    query_artist = "SELECT ArtistID FROM Artist"
+    
+    cursor = connection.cursor()
+    cursor.execute(query_visitor)
+    visitor_ids = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute(query_artist)
+    artist_ids = [row[0] for row in cursor.fetchall()]
+
+    if user_id in artist_ids:
+        return True
+    else:
+        return False 
+
+    cursor.close()
 
 @app.route('/profile/update', methods=['GET', 'POST'])
 def update_profile():

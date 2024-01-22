@@ -12,6 +12,7 @@ class User(db.Model):
     # Relationships
     artworks = db.relationship('Artwork', secondary='review', back_populates='users')
     comments = db.relationship('Review_Comments', backref='user')
+    visitors = db.relationship('Visitor', backref='user', uselist=False)
 
 class Artist(db.Model):
     __tablename__ = 'artist'

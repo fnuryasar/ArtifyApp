@@ -1,17 +1,104 @@
-<!-- Similar head section as before -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .profile-header h1 {
+        margin: 0;
+    }
+    .profile-header p {
+        color: #888;
+        margin: 5px 0 20px;
+    }
+    .profile-details {
+        margin-bottom: 30px;
+    }
+    .profile-details h2 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-top: 0;
+    }
+    .profile-details ul {
+        list-style: none;
+        padding: 0;
+    }
+    .profile-details ul li {
+        padding: 5px 0;
+    }
+    .label {
+        font-weight: bold;
+    }
+    .artwork-list {
+        padding: 0;
+    }
+    .artwork-list h3 {
+        margin-top: 0;
+    }
+    .artwork-list ul {
+        list-style: none;
+        padding: 0;
+    }
+    .artwork-list ul li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+</style>
+</head>
 <body>
-    <h1>Visitor Profile</h1>
-    <p>Full Name: {{ visitor.user.FullName }}</p>
-    <p>Username: {{ visitor.user.UserName }}</p>
-    <p>Phone: {{ visitor.PhoneNumber }}</p>
-    <p>Email: {{ visitor.Email }}</p>
-    <p>Address: {{ visitor.Address }}</p>
-    <p>Digital Wallet: {{ visitor.DigitalWallet }}</p>
-    <h2>Purchased Artworks</h2>
-    <ul>
-        {% for artwork in purchased_artworks %}
-            <li><a href="/artwork/{{ artwork.ArtworkID }}">{{ artwork.ATitle }} - {{ artwork.SaleDate }} - {{ artwork.Price }}</a></li>
-        {% endfor %}
-    </ul>
-    <!-- Add form to update visitor info -->
+<div class="container">
+    <div class="profile-header">
+        <h1>Visitor Profile</h1>
+        <p>Explore the artworks you love!</p>
+    </div>
+    <div class="profile-details">
+        <h2>Personal Details</h2>
+        <ul>
+            <li><span class="label">Full Name:</span> David Smith</li>
+            <li><span class="label">Username:</span> DSmith</li>
+            <li><span class="label">Phone:</span> 555-1001-003</li>
+            <li><span class="label">Email:</span> david.smith@email.com</li>
+            <li><span class="label">Address:</span> 789 Pine Road, Greensville</li>
+            <li><span class="label">Digital Wallet:</span> 550000</li>
+        </ul>
+    </div>
+    <div class="artwork-list">
+        <h2>Purchased Artworks</h2>
+        <ul>
+            {% for artwork in user_purchased_artworks %}
+            <li>
+                <strong>Title:</strong> {{ artwork.Title }}
+                <br>
+                <strong>Category:</strong> {{ artwork.Category }}
+                <br>
+                <img src="{{ artwork.Image }}" alt="{{ artwork.Title }}" style="width:100px; height:auto;">
+                <br>
+                <strong>Description:</strong> {{ artwork.Description }}
+            </li>
+            {% else %}
+            <li>No artworks purchased yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 </body>
+</html>
