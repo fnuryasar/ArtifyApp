@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="navigation-buttons">
+        <a href="{{ url_for('welcome') }}">Welcome</a>
+    </div>
     <div class="auth-form-container">
         <form action="{{ url_for('login') }}" method="post">
             <div>

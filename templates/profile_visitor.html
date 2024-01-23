@@ -7,33 +7,36 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: #1e4b55;
         margin: 0;
         padding: 0;
+        color: #eab762;
     }
     .container {
         max-width: 800px;
         margin: auto;
-        background: #fff;
+        background-color: #1e4b55;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px #eab762;
     }
     .navigation-buttons {
     display: flex;
     justify-content: space-between;
-    background-color:#333;
+    background-color: #1e4b55;
     padding: 10px;
-    color: #555;
+    color: #fde7c0;
 }
 
 .navigation-buttons a {
     text-decoration: none;
-    color: #fff;
+    color: #fde7c0;
     padding: 5px 10px;
     border: 1px solid #555;
     border-radius: 5px;
     margin-right: 10px;
+    background-color: #1e4b55;
+    box-shadow:  0 4px 8px #eab762;
 }
 
 .navigation-buttons a:hover {
@@ -48,7 +51,7 @@
         margin: 0;
     }
     .profile-header p {
-        color: #888;
+        color: #fde7c0;
         margin: 5px 0 20px;
     }
     .profile-details {
@@ -91,15 +94,15 @@
 </style>
 </head>
 <body>
+<div class="navigation-buttons">
+    <a href="{{ url_for('welcome') }}">Welcome</a>
+    <a href="{{ url_for('artworks') }}">Artworks</a>
+</div>  
 <div class="container">
     <div class="profile-header">
         <h1>{{ profile_title }}</h1>
         <p>Explore the artworks you love!</p>
-    </div>
-    <div class="navigation-buttons">
-        <a href="{{ url_for('welcome') }}">Welcome</a>
-        <a href="{{ url_for('artworks') }}">Artworks</a>
-    </div>    
+    </div>  
     <div class="profile-details">
         <h2>Personal Details</h2>
         <ul>
@@ -116,15 +119,14 @@
         <ul>
             {% if purchased_artworks %}
                 {% for artwork in purchased_artworks %}
-                <li>
-                    <strong>Title:</strong> {{ artwork[1] }}
-                    <br>
-                    <strong>Style:</strong> {{ artwork[2] }}
-                    <br>
-                    <img src="{{ url_for('static', filename='Artworks/' + artwork[0]|string + '.jpg') }}" alt="{{ artwork[1] }}">
-                    <br>
-                    <strong>Description:</strong> {{ artwork[5] }}
-                </li>
+                    <li>
+                        <img src="{{ url_for('static', filename='Artworks/' + artwork.ArtworkID|string + '.jpg') }}" alt="{{ artwork.ATitle }}" style="height: 200px;">
+                        <div>
+                            <strong>Title:</strong> {{ artwork.ATitle }}<br>
+                            <strong>Style:</strong> {{ artwork.AStyle }}<br>
+                            <strong>Description:</strong> {{ artwork.Description }}<br>
+                        </div>
+                    </li>
                 {% endfor %}
             {% else %}
                 <li>No artworks purchased yet.</li>
@@ -133,7 +135,14 @@
     </div>
 </div>
 </body>
-</html>
+<style>
+    .artwork-list ul {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 10px;
+    }
+</style>
+</head>
 
 <body>
     <h1>Click the button to get the most bought type of artwork by this user</h1>

@@ -33,21 +33,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artist Profile</title>
     <style>
+    a {
+        color: navajowhite;
+    }
         body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
     text-align: center;
+    color: #eab762;
 }
 
 .container {
     max-width: 800px;
     margin: auto;
-    background: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #1e4b55;
+    box-shadow:  0 4px 8px #eab762;
 }
 
 .profile-header {
@@ -60,7 +64,7 @@
 }
 
 .profile-header p {
-    color: #888;
+    color: #eab762;
     margin: 5px 0 20px;
 }
 
@@ -69,7 +73,7 @@
 }
 
 .profile-details h2, .artwork-list h2 {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eab762;
     padding-bottom: 10px;
     margin-top: 0;
 }
@@ -81,7 +85,7 @@
 
 .profile-details ul li, .artwork-list ul li {
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eab762;
 }
 
 .label {
@@ -94,7 +98,7 @@
 
 .artwork-list ul li {
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eab762;
     text-align: left;
 }
 
@@ -111,9 +115,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div class="navigation-buttons">
+    <a href="{{ url_for('welcome') }}">Welcome</a>
+    <a href="{{ url_for('artworks') }}">Artworks</a>
+</div>
 <div class="container">
     <div class="profile-header">
-        <a href="{{ url_for('welcome') }}" class="button">Go to Welcome Page</a>
         <h1>{{ artist.user.FullName }}</h1>
         <p>Discover the unique art and style of this artist.</p>
     </div>
@@ -136,7 +143,7 @@
                     <br>
                     <strong>Style:</strong> {{ artwork.AStyle }}
                     <br>
-                    <img src="{{ url_for('static', filename='Artworks/' + artwork.ArtworkID|string + '.jpg') }}" alt="{{ artwork.ATitle }}" style="max-width: 200px;">
+                    <img src="{{ url_for('static', filename='Artworks/' + artwork.ArtworkID|string + '.jpg') }}" alt="{{ artwork.ATitle }}" style="max-width: 500px;">
                     <br>
                     <strong>Description:</strong> {{ artwork.Description }}
                 </li>

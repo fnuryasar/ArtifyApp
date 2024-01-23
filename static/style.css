@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    background-color: #1e4b55;
     overflow: auto; /* Hide any overflowing content */
 }
 .image-container {
@@ -13,33 +14,34 @@ body {
 
 /* CSS Styles */
 .image-fit {
-    width: 100%; /* Make the image width 100% of its container */
+    width: 74%; /* Make the image width 100% of its container */
     height: auto; /* Automatically adjust the height to maintain aspect ratio */
+    margin: auto; /* Center the image */
     display: block; /* Remove any default inline alignment */
 }
 
 .welcome-container {
-    background-color: rgb(227, 95, 23);
-    color: navajowhite;
+    background-color: #1e4b55;
+    color: #eab762;
 }
 
 .welcome-container {
-    background-color: rgb(227, 95, 23);
+    background-color: #1e4b55;
     background-size: cover;
-    padding: 60px;
-    color: navajowhite;
+    padding: 10px;
+    color: #eab762;
     position: relative; /* Add this for z-index */
 }
 
 .welcome-container {
     background-size: cover;
-    padding: 55px;
-    color: navajowhite;
+    padding: 10px;
+    color: #eab762;
 }
 
 .navigation a, .directory a {
     margin: 50px;
-    color: navajowhite;
+    color: #eab762;
     text-decoration: none;
 }
 
@@ -47,31 +49,56 @@ body {
 .content-container {
     margin: 20px;
     padding: 20px;
-    background-color: navajowhite;
+    background-color: #1e4b55;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px #eab762;
+    color: #eab762;
     text-align: left;
 }
 
 .gallery-list,
 .exhibition-list {
     list-style-type: none;
+    color: #eab762;
     padding: 0;
 }
 
 .gallery-item,
 .exhibition-item {
-    background-color: #ffffff;
+    background-color: #1e4b55;
     margin-bottom: 20px;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow:  0 4px 8px #eab762;
 }
 
 .gallery-item h2,
 .exhibition-item h2 {
-    color: #333;
+    color: #0b0b0b;
     margin-top: 0;
+}
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    background-color:#1e4b55;
+    padding: 10px;
+    color: #fff;
+    margin: 2px;
+}
+
+.navigation-buttons a {
+    text-decoration: none;
+    color: #fde7c0;
+    padding: 5px 10px;
+    border: 1px solid #1e4b55;
+    background-color: #1e4b55;
+    box-shadow:  0 4px 8px #eab762;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.navigation-buttons a:hover {
+    background-color: rgb(227, 95, 23);
 }
 
 .basket-view {
@@ -160,27 +187,7 @@ body {
     object-fit: cover; 
 } */
 
-.navigation-buttons {
-    display: flex;
-    justify-content: space-between;
-    background-color:#333;
-    padding: 10px;
-    color: #fff;
-    margin: 2px;
-}
 
-.navigation-buttons a {
-    text-decoration: none;
-    color: #fff;
-    padding: 5px 10px;
-    border: 1px solid #555;
-    border-radius: 5px;
-    margin-right: 10px;
-}
-
-.navigation-buttons a:hover {
-    background-color: rgb(227, 95, 23);
-}
 
 .artwork-grid {
     display: grid;
@@ -204,15 +211,19 @@ body {
     background-color: #f4f4f4;
     padding: 10px;
     border-radius: 5px;
+    background-color: #99acb1;
+    box-shadow:  0 4px 8px #eab762;
 }
 
 .artwork-comments ul {
     list-style-type: none;
     padding: 0;
+    
 }
 
 .artwork-comments li {
     margin-bottom: 5px;
+    
 }
 
 
@@ -256,15 +267,16 @@ body {
     max-width: 600px;
     margin: 200px auto;
     padding: 100px;
-    background-color: navajowhite;
+    background-color: #1e4b55;
+    box-shadow:  0 4px 8px #eab762;
     border-radius: 50px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .auth-form-container label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #eab762;
 }
 
 .auth-form-container input[type="text"],
@@ -286,7 +298,7 @@ body {
     padding: 10px;
     border: none;
     border-radius: 4px;
-    background-color: rgb(247, 150, 5);
+    background-color: #eab762;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -294,6 +306,6 @@ body {
 }
 
 .auth-form-container button[type="submit"]:hover {
-    background-color: #3949AB;
+    background-color: navajowhite;
 }
 
