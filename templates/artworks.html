@@ -13,6 +13,7 @@
         <a href="{{ url_for('welcome') }}">Welcome</a>
         <a href="{{ url_for('profile') }}">Profile</a>
     </div>
+    {% if basket_artworks %}
     <div class="basket-view">
         <h2>Your Basket</h2>
         <div class="basket-items">
@@ -44,7 +45,8 @@
             <button onclick="checkout()">Checkout</button>
         </div>
     </div>
-    
+    {% endif %}
+
 
     <!-- Artwork Grid Section -->
     <div class="artwork-grid">
