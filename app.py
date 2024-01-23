@@ -231,6 +231,32 @@ def artist_details(artist_id):
         return "Artist not found", 404
 
     return render_template('artist_details.html', artist=artist, artworks=artworks)
+
+# Profile Advance Query:
+@app.route('/execute_python_function', methods=['POST'])
+def execute_python_function():
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': 'User not authenticated'})
+
+    result = most_purchased_type_of_art(user_id)
+
+    if isinstance(result, str):
+        return jsonify({'error': result})
+    else:
+        formatted_result = [{'art_type': art_type, 'count': count} for art_type, count in result]
+        return jsonify({'data': formatted_result})
+
+# Select AType, COUNT(*) FROM Artwork, Visitor WHERE Visitor.VisitorID = user_id AND Artwork.VisitorID = user_id GROUP BY AType ORDER BY COUNT(*) DESC;
+def most_purchased_type_of_art(user_id):
+    results = db.session.query(Artwork.AType, func.count(Artwork.AType))\
+                        .join(Visitor, Artwork.VisitorID == Visitor.VisitorID)\
+                        .filter(Visitor.VisitorID == user_id)\
+                        .group_by(Artwork.AType)\
+                        .order_by(func.count(Artwork.AType).desc())\
+                        .all()
+    return results if results else 'No most occurring type found'
 ###############################################################################################################################
 #  Basket Pages:
 @app.route('/remove_from_basket', methods=['POST'])
