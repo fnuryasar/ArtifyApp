@@ -217,7 +217,7 @@ def profile():
     cursor.close()
     #print(purchased_artworks)
 
-    if user.is_artist:  # Assuming you have a method to determine if user is an artist
+    if user.is_artist:  
         artist = Artist.query.get(user_id)
         #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
         return render_template('profile_artist.html', user=user, artworks=artworks)
@@ -317,17 +317,20 @@ def your_python_function(user_id):
     # Your Python function logic here
     cursor = connection.cursor()
     query = """
-    SELECT Artwork.ATitle, COUNT(*)
+    SELECT Artwork.AType
     FROM Artwork , Visitor 
     WHERE Visitor.VisitorID = %s  
         AND Artwork.VisitorID = Visitor.VisitorID
-    GROUP BY Artwork.ArtworkID
+    GROUP BY Artwork.AType
     ORDER BY COUNT(*) DESC
     """
     cursor.execute(query, (user_id,))
     result = cursor.fetchone()
     #print(type(result))
-    result = result[0]
+    if result:
+        result = result[0]
+    else:
+        result = 'no most occuring type found'
     #print(type(result))
     cursor.close()
     return result
