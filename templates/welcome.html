@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="image-container">
-        <img src="{{ url_for('static', filename='images/welcome.jpg') }}" alt="Welcome to Artify">
-    </div>
     <div class="welcome-container">
         <div class="navigation" style="text-align: right;">
             {% if not session.logged_in %}
@@ -33,8 +30,8 @@
             <a href="/profile">Profile</a>
         </div>
     </div>
-    <div class="basket-icon">
-        <!-- Basket icon implementation -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='images/welcome.jpg') }}" alt="Welcome to Artify" class="image-fit">
     </div>
 </body>
 </html>

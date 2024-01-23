@@ -1,13 +1,26 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    overflow: auto; /* Hide any overflowing content */
+}
+.image-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    position: relative; /* Change this to relative */
 }
 
-.image-container {
-    background-image: url('/static/images/welcome.jpg');
-    background-size: cover;
-    padding: 0px;
-    color: navy;
+/* CSS Styles */
+.image-fit {
+    width: 100%; /* Make the image width 100% of its container */
+    height: auto; /* Automatically adjust the height to maintain aspect ratio */
+    display: block; /* Remove any default inline alignment */
+}
+
+.welcome-container {
+    background-color: rgb(227, 95, 23);
+    color: navajowhite;
 }
 
 .welcome-container {
@@ -15,6 +28,7 @@ body {
     background-size: cover;
     padding: 60px;
     color: navajowhite;
+    position: relative; /* Add this for z-index */
 }
 
 .welcome-container {
@@ -151,7 +165,8 @@ body {
     justify-content: space-between;
     background-color:#333;
     padding: 10px;
-    color: #555;
+    color: #fff;
+    margin: 2px;
 }
 
 .navigation-buttons a {
