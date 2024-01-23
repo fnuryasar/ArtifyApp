@@ -263,6 +263,7 @@ def add_to_basket():
 
     return redirect(url_for('artworks'))
 
+<<<<<<< HEAD
 @app.route('/logout')
 def logout():
     session.clear()  # Clear the user's session
@@ -416,6 +417,8 @@ def your_python_function(user_id):
     cursor.close()
     return result
 
+=======
+>>>>>>> parent of 1b6c2f7 (Merge branch 'emirhan3')
 def get_basket_artwork_details(basket_ids):
     if not basket_ids:
         return []
