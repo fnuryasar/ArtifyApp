@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Profile</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -136,32 +138,40 @@
 </html>
 
 <body>
-    <h1>Click the button to get the most bought type of artwork by this user</h1>
+    <h1>Most Ocurring Artwork Type</h1>
     <button id="executeButton">Execute</button>
 
-    Notification Pane
-    <div id="notificationPane" style="display:none; position:fixed; top:20px; right:20px; background:lightgrey; padding:15px; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-        <span id="notificationMessage"></span>
-        <button onclick="document.getElementById('notificationPane').style.display='none'">Close</button>
+    <!-- Notification Bubble for Results -->
+    <div id="notificationBubble">
+        <h2>Results:</h2>
+        <ul id="resultsList"></ul>
     </div>
 
     <script>
-        document.getElementById('executeButton').addEventListener('click', function() {
-            fetch('/execute-python-function', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.text())  // Expecting a text response
-            .then(text => {
-                document.getElementById('notificationMessage').textContent = text;
-                document.getElementById('notificationPane').style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('notificationMessage').textContent = 'Error: ' + error;
-                document.getElementById('notificationPane').style.display = 'block';
+        $(document).ready(function() {
+            $('#executeButton').on('click', function(e) {
+                e.preventDefault(); // Prevent the default form submit
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url_for('execute_python_function') }}",
+                    dataType: 'json',
+                    success: function(response) {
+                        $('#resultsList').empty(); // Clear previous results
+                        if (response.error) {
+                            $('#resultsList').append('<li>' + response.error + '</li>');
+                        } else {
+                            response.data.forEach(function(item) {
+                                // Access properties by their names
+                                $('#resultsList').append('<li>' + item.art_type + ': ' + item.count + '</li>');
+                            });
+                        }
+                        $('#notificationBubble').show(); // Show the notification bubble
+                    },
+                    error: function() {
+                        $('#resultsList').append('<li>Error fetching data</li>');
+                        $('#notificationBubble').show();
+                    }
+                });
             });
         });
     </script>
