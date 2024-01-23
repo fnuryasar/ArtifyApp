@@ -12,13 +12,14 @@ from models import db, Gallery, Exhibition, Artwork, User, Visitor, Artist, Revi
 ##### START APP CONFIGURATION #####
 app = Flask(__name__)
 app.secret_key = 'some_random_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:merhabalar@localhost/artify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/artify'
 db.init_app(app)
 
 connection = mysql.connector.connect(host='localhost',
                                              database='Artify',
                                              user='root',
-                                             password='merhabalar') 
+                                             password='admin') 
+
 ##### END APP CONFIGURATION #####
 
 
@@ -103,9 +104,15 @@ def artworks():
             'comments': formatted_comments
         })
     
-    
+    basket_ids = session.get('basket', [])
+    basket_artwork_details = get_basket_artwork_details(basket_ids)
+    total_price = sum(artwork['Price'] for artwork in basket_artwork_details)
 
-    return render_template('artworks.html', artworks=artworks_data)
+
+    return render_template('artworks.html', 
+                           artworks=artworks_data, 
+                           basket_artworks=basket_artwork_details, 
+                           total_price=total_price)
 
 ## Artist Details Page:
 # SELECT FullName, UserName, Style, Bio FROM Artist, User WHERE Artist.ArtistID = artist_id AND User.UId = artist_id;
@@ -142,6 +149,22 @@ def artwork_details(artwork_id):
         sold_info = User.query.get(artwork.VisitorID)
 
     return render_template('artwork_details.html', artwork=artwork, gallery=gallery, artist_details=artist_details, exhibition_titles=exhibition_titles, sold_info=sold_info)
+
+
+@app.route('/add_to_basket', methods=['POST'])
+def add_to_basket():
+    artwork_id = request.form.get('artwork_id')
+    if 'basket' not in session:
+        session['basket'] = []
+
+    # Check if the artwork_id is not already in the basket
+    if artwork_id not in session['basket']:
+        session['basket'].append(artwork_id)
+
+    # Mark the session as modified
+    session.modified = True
+
+    return redirect(url_for('artworks'))
 
 @app.route('/logout')
 def logout():
@@ -269,8 +292,7 @@ def signup():
 
 @app.route('/execute-python-function', methods=['POST'])
 def execute_python_function():
-    user_id = session.get('user_id')
-    
+    user_id = session.get('user_id')   
     result = your_python_function(user_id)  
     
     return result
@@ -294,6 +316,23 @@ def your_python_function(user_id):
     #print(type(result))
     cursor.close()
     return result
+
+def get_basket_artwork_details(basket_ids):
+    if not basket_ids:
+        return []
+
+    query = """
+SELECT ArtworkID, ATitle, Price FROM Artwork
+WHERE ArtworkID IN (%s)
+""" % ','.join(['%s'] * len(basket_ids))
+
+
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, basket_ids)
+    artworks = cursor.fetchall()
+    cursor.close()
+    return artworks
+
 
 if __name__ == '__main__':
     app.run(debug=True)
