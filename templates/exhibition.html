@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="navigation-buttons">
+        <a href="{{ url_for('welcome') }}">Welcome</a>
+        <a href="{{ url_for('artworks') }}">Artworks</a>
+    </div>    
     <div class="content-container">
         <h1>Art Exhibitions</h1>
         <ul class="exhibition-list">

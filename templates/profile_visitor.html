@@ -19,6 +19,27 @@
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+    .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    background-color:#333;
+    padding: 10px;
+    color: #555;
+}
+
+.navigation-buttons a {
+    text-decoration: none;
+    color: #fff;
+    padding: 5px 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.navigation-buttons a:hover {
+    background-color: rgb(227, 95, 23);
+}
+
     .profile-header {
         text-align: center;
         margin-bottom: 30px;
@@ -75,7 +96,10 @@
         <h1>{{ profile_title }}</h1>
         <p>Explore the artworks you love!</p>
     </div>
-    <a href="{{ url_for('welcome') }}" class="button">Go to Welcome Page</a>
+    <div class="navigation-buttons">
+        <a href="{{ url_for('welcome') }}">Welcome</a>
+        <a href="{{ url_for('artworks') }}">Artworks</a>
+    </div>    
     <div class="profile-details">
         <h2>Personal Details</h2>
         <ul>
