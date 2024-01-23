@@ -386,32 +386,35 @@ def signup():
 
     return render_template('signup.html')
 
-@app.route('/execute_python_function', methods=['POST'])
+@app.route('/execute-python-function', methods=['POST'])
 def execute_python_function():
-    user_id = session.get('user_id')
+    user_id = session.get('user_id')   
+    result = your_python_function(user_id)  
+    
+    return result
 
-    if not user_id:
-        return jsonify({'error': 'User not authenticated'})
-
-    result = most_purchased_type_of_art(user_id)
-
-    if isinstance(result, str):
-        return jsonify({'error': result})
+# Define your Python function
+def your_python_function(user_id):
+    # Your Python function logic here
+    cursor = connection.cursor()
+    query = """
+    SELECT Artwork.AType
+    FROM Artwork , Visitor 
+    WHERE Visitor.VisitorID = %s  
+        AND Artwork.VisitorID = Visitor.VisitorID
+    GROUP BY Artwork.AType
+    ORDER BY COUNT(*) DESC
+    """
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchone()
+    #print(type(result))
+    if result:
+        result = result[0]
     else:
-        formatted_result = [{'art_type': art_type, 'count': count} for art_type, count in result]
-        return jsonify({'data': formatted_result})
-
-def most_purchased_type_of_art(user_id):
-    results = db.session.query(Artwork.AType, func.count(Artwork.AType))\
-                        .join(Visitor, Artwork.VisitorID == Visitor.VisitorID)\
-                        .filter(Visitor.VisitorID == user_id)\
-                        .group_by(Artwork.AType)\
-                        .order_by(func.count(Artwork.AType).desc())\
-                        .all()
-    return results if results else 'No most occurring type found'
-
-
-
+        result = 'no most occuring type found'
+    #print(type(result))
+    cursor.close()
+    return result
 
 def get_basket_artwork_details(basket_ids):
     if not basket_ids:

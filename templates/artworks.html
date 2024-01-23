@@ -32,6 +32,7 @@
                             <p class="basket-artwork-title">{{ artwork['ATitle'] }}</p>
                             <p class="basket-artwork-price">Price: ${{ artwork['Price'] }}</p>
                         </div>
+                        <!-- Add a Remove button here -->
                         <form method="POST" action="{{ url_for('remove_from_basket') }}">
                             <input type="hidden" name="artwork_id" value="{{ artwork['ArtworkID'] }}">
                             <button type="submit">Remove</button>

@@ -85,6 +85,7 @@
             {% if sold_info %}
                 <li><span class="label">Sold to:</span> {{ sold_info.UserName }} on {{ artwork.SaleDate }}</li>
             {% else %}
+            <!-- Need to update -->
                 <form action="/add_to_basket" method="POST">
                     <input type="hidden" name="artwork_id" value="{{ artwork.ArtworkID }}">
                     <button type="submit" class="button">Add to Basket</button>
