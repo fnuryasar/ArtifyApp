@@ -259,6 +259,7 @@ def most_purchased_type_of_art(user_id):
     return results if results else 'No most occurring type found'
 ###############################################################################################################################
 #  Basket Pages:
+# 
 @app.route('/remove_from_basket', methods=['POST'])
 def remove_from_basket():
     artwork_id = request.form.get('artwork_id')
@@ -308,6 +309,7 @@ def checkout():
     else:
         return jsonify({'success': False, 'message': 'User not logged in.'})
 
+
 def process_checkout(user_id):
     basket_ids = session.get('basket', [])
     if not basket_ids:
@@ -346,102 +348,8 @@ def process_checkout(user_id):
         return True, "Checkout successful."
     else:
         return False, "No items in the basket to checkout."
-
-
+### END ROUTES ###
 ###############################################################################################################################
-# @app.route('/profile')
-# def profile():
-#     if not session.get('logged_in'):
-#         return redirect(url_for('login'))
-
-#     user_id = session.get('user_id')
-#     user = User.query.get_or_404(user_id)
-
-#     user.is_artist = check_user_id(user_id) 
-
-#     cursor = connection.cursor()
-#     cursor.close()
-
-#     cursor = connection.cursor()
-
-#     if user.is_artist:
-#         cursor.execute("""
-#             SELECT Artwork.* FROM Artwork
-#             JOIN CreateArt ON Artwork.ArtworkID = CreateArt.ArtworkID
-#             JOIN Artist ON CreateArt.ArtistId = Artist.ArtistID
-#             WHERE CreateArt.ArtistID = %s
-#         """, (user_id,))
-#         artworks = cursor.fetchall()
-#     else:
-#         cursor.execute("SELECT Artwork.* FROM Artwork WHERE VisitorID = %s", (user_id,))
-#         purchased_artworks = cursor.fetchall()
-    
-#     cursor.close()
-#     #print(purchased_artworks)
-
-#     if user.is_artist:  
-#         artist = Artist.query.get(user_id)
-#         #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
-#         return render_template('profile_artist.html', user=user, artworks=artworks)
-#     else:
-#         visitor = Visitor.query.get(user_id)
-#         #purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
-#         return render_template('profile_visitor.html', user=user, visitor=visitor, purchased_artworks=purchased_artworks)
-
-
-# def check_user_id(user_id):
-#     query_visitor = "SELECT VisitorID FROM Visitor"
-#     query_artist = "SELECT ArtistID FROM Artist"
-    
-#     cursor = connection.cursor()
-#     cursor.execute(query_visitor)
-#     visitor_ids = [row[0] for row in cursor.fetchall()]
-
-#     cursor.execute(query_artist)
-#     artist_ids = [row[0] for row in cursor.fetchall()]
-
-#     if user_id in artist_ids:
-#         return True
-#     else:
-#         return False 
-
-#     cursor.close()
-
-
-
-
-# @app.route('/execute-python-function', methods=['POST'])
-# def execute_python_function():
-#     user_id = session.get('user_id')   
-#     result = your_python_function(user_id)  
-    
-#     return result
-
-# # Define your Python function
-# def your_python_function(user_id):
-#     # Your Python function logic here
-#     cursor = connection.cursor()
-#     query = """
-#     SELECT Artwork.AType
-#     FROM Artwork , Visitor 
-#     WHERE Visitor.VisitorID = %s  
-#         AND Artwork.VisitorID = Visitor.VisitorID
-#     GROUP BY Artwork.AType
-#     ORDER BY COUNT(*) DESC
-#     """
-#     cursor.execute(query, (user_id,))
-#     result = cursor.fetchone()
-#     #print(type(result))
-#     if result:
-#         result = result[0]
-#     else:
-#         result = 'no most occuring type found'
-#     #print(type(result))
-#     cursor.close()
-#     return result
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
