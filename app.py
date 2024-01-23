@@ -263,6 +263,156 @@ def add_to_basket():
 
     return redirect(url_for('artworks'))
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the user's session
+    return redirect(url_for('welcome'))
+
+@app.route('/profile')
+def profile():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    user = User.query.get_or_404(user_id)
+
+    user.is_artist = check_user_id(user_id) 
+
+    cursor = connection.cursor()
+    cursor.close()
+
+    cursor = connection.cursor()
+
+    if user.is_artist:
+        cursor.execute("""
+            SELECT Artwork.* FROM Artwork
+            JOIN Create ON Artwork.ArtworkID = Create.ArtworkID
+            JOIN Artist ON Create.ArtistID = Artist.ArtistID
+            WHERE Create.ArtistID = %s
+        """, (user_id,))
+        artworks = cursor.fetchall()
+    else:
+        cursor.execute("SELECT Artwork.* FROM Artwork WHERE VisitorID = %s", (user_id,))
+        purchased_artworks = cursor.fetchall()
+    
+    cursor.close()
+    #print(purchased_artworks)
+
+    if user.is_artist:  
+        artist = Artist.query.get(user_id)
+        #artworks = Artwork.query.filter_by(ArtistId=user_id).all()
+        return render_template('profile_artist.html', user=user, artworks=artworks)
+    else:
+        visitor = Visitor.query.get(user_id)
+        #purchased_artworks = Artwork.query.filter_by(VisitorID=user_id).all()
+        return render_template('profile_visitor.html', user=user, visitor=visitor, purchased_artworks=purchased_artworks)
+
+def check_user_id(user_id):
+    query_visitor = "SELECT VisitorID FROM Visitor"
+    query_artist = "SELECT ArtistID FROM Artist"
+    
+    cursor = connection.cursor()
+    cursor.execute(query_visitor)
+    visitor_ids = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute(query_artist)
+    artist_ids = [row[0] for row in cursor.fetchall()]
+
+    if user_id in artist_ids:
+        return True
+    else:
+        return False 
+
+    cursor.close()
+    
+@app.route('/profile/update', methods=['GET', 'POST'])
+def update_profile():
+    # Implement logic to update user profile
+    pass
+
+@app.route('/upload_artwork', methods=['GET', 'POST'])
+def upload_artwork():
+    # Implement logic for artist to upload new artwork
+    pass
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(UserName=username, UPassword=password).first()
+        if user:
+            session['logged_in'] = True
+            session['user_id'] = user.UId
+            return redirect(url_for('profile'))
+        else:
+            return 'Login Failed'
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        user_type = request.form['user_type']
+        new_user = User(
+            FullName=request.form['fullname'],
+            UserName=request.form['username'],
+            UPassword=request.form['password']
+            # Other common fields
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        if user_type == 'Visitor':
+            new_visitor = Visitor(
+                VisitorID=new_user.UId,
+                PhoneNumber=request.form['phone'],
+                Email=request.form['email'],
+                DigitalWallet=request.form['wallet'],
+                Address=request.form['address']
+                # Other visitor-specific fields
+            )
+            db.session.add(new_visitor)
+        elif user_type == 'Artist':
+            new_artist = Artist(
+                ArtistID=new_user.UId,
+                Bio=request.form['bio'],
+                ArtistStyle=request.form['style']
+                # Other artist-specific fields
+            )
+            db.session.add(new_artist)
+
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('signup.html')
+
+@app.route('/execute_python_function', methods=['POST'])
+def execute_python_function():
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': 'User not authenticated'})
+
+    result = most_purchased_type_of_art(user_id)
+
+    if isinstance(result, str):
+        return jsonify({'error': result})
+    else:
+        formatted_result = [{'art_type': art_type, 'count': count} for art_type, count in result]
+        return jsonify({'data': formatted_result})
+
+def most_purchased_type_of_art(user_id):
+    results = db.session.query(Artwork.AType, func.count(Artwork.AType))\
+                        .join(Visitor, Artwork.VisitorID == Visitor.VisitorID)\
+                        .filter(Visitor.VisitorID == user_id)\
+                        .group_by(Artwork.AType)\
+                        .order_by(func.count(Artwork.AType).desc())\
+                        .all()
+    return results if results else 'No most occurring type found'
+
+
+
+
 def get_basket_artwork_details(basket_ids):
     if not basket_ids:
         return []
