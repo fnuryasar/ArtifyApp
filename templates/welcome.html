@@ -11,6 +11,19 @@
         <img src="{{ url_for('static', filename='images/welcome.jpg') }}" alt="Welcome to Artify">
     </div>
     <div class="welcome-container">
+        <div class="navigation" style="text-align: right;">
+            {% if not session.logged_in %}
+             <a href="/signup">Sign Up</a>
+            {% endif %}  
+            
+            {% if not session.logged_in %}
+            | <a href="/login">Log In</a>
+            {% endif %}
+
+            {% if session.logged_in %}
+            <a href="{{ url_for('logout') }}">Log Out</a>
+            {% endif %}
+        </div>
         <h1>Welcome to Artify</h1>
         <p>Your one-stop destination for exploring and purchasing art.</p>
         <div class="directory">
@@ -18,17 +31,10 @@
             <a href="/exhibitions">Exhibitions</a> | 
             <a href="/artworks">Artworks</a> | 
             <a href="/profile">Profile</a>
-            {% if session.logged_in %}
-                | <a href="{{ url_for('logout') }}">Log Out</a>
-            {% endif %}
-        </div>
-        <div class="navigation">
-            <a href="/signup">Sign Up</a> | <a href="/login">Log In</a>
         </div>
     </div>
     <div class="basket-icon">
         <!-- Basket icon implementation -->
     </div>
-    
 </body>
 </html>

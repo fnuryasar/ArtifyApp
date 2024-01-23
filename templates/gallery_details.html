@@ -1,0 +1,40 @@
+<!-- gallery_details.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ gallery.GName }} Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="content-container">
+        <h1>{{ gallery.GName }} Details</h1>
+        <p>Address: {{ gallery.GAddress }}</p>
+
+        <h2>Closed Days:</h2>
+        <ul>
+            {% for closed_day in gallery.closed_days %}
+                <li>{{ closed_day.ClosedDay }}</li>
+            {% endfor %}
+        </ul>
+
+
+        <h2>Artworks:</h2>
+        <ul>
+            {% for artwork in gallery.artworks %}
+                <li><a href="{{ url_for('artwork_details', artwork_id=artwork.ArtworkID) }}">{{ artwork.ATitle }}</a></li>
+            {% endfor %}
+        </ul>
+        
+        <h2>Exhibitions:</h2>
+        <ul>
+            {% for exhibition in gallery.exhibitions %}
+                <li><a href="{{ url_for('exhibition_details', exhibition_id=exhibition.ExhibitionID) }}">{{ exhibition.ETitle }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('galleries') }}" class="back-button">Back to All Galleries</a>
+    </div>
+</body>
+</html>

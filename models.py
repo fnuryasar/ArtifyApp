@@ -21,7 +21,8 @@ class Artist(db.Model):
     ArtistStyle = db.Column(db.String(50))
 
     # Relationships
-    created_artworks = db.relationship('Artwork', secondary='create_art', back_populates='artists')
+    user = db.relationship('User', backref='artist')
+    created_artworks = db.relationship('Artwork', secondary='CreateArt', back_populates='artists')
 
 class Artwork(db.Model):
     __tablename__ = 'artwork'
@@ -39,9 +40,9 @@ class Artwork(db.Model):
 
     # Relationships
     users = db.relationship('User', secondary='review', back_populates='artworks')
-    artists = db.relationship('Artist', secondary='create_art', back_populates='created_artworks')
+    artists = db.relationship('Artist', secondary='CreateArt', back_populates='created_artworks')
     galleries = db.relationship('Gallery', backref='artworks')
-    exhibitions = db.relationship('Exhibition', secondary='display', back_populates='artworks')
+    exhibitions = db.relationship('Exhibition', secondary='Display', back_populates='artworks')
 
 class Gallery(db.Model):
     __tablename__ = 'gallery'
@@ -51,7 +52,7 @@ class Gallery(db.Model):
 
     # Relationships
     closed_days = db.relationship('ClosedDays', backref='gallery', cascade="all, delete")
-    exhibitions = db.relationship('Exhibition', secondary='schedule', back_populates='galleries')
+    exhibitions = db.relationship('Exhibition', secondary='Schedule', back_populates='galleries')
 
 class Exhibition(db.Model):
     __tablename__ = 'exhibition'
@@ -62,8 +63,8 @@ class Exhibition(db.Model):
     Location = db.Column(db.String(50))
 
     # Relationships
-    galleries = db.relationship('Gallery', secondary='schedule', back_populates='exhibitions')
-    artworks = db.relationship('Artwork', secondary='display', back_populates='exhibitions')
+    galleries = db.relationship('Gallery', secondary='Schedule', back_populates='exhibitions')
+    artworks = db.relationship('Artwork', secondary='Display', back_populates='exhibitions')
 
 class Visitor(db.Model):
     __tablename__ = 'visitor'
@@ -90,27 +91,27 @@ class Review_Comments(db.Model):
     Comment = db.Column(db.String(500), primary_key=True)
 
 class ClosedDays(db.Model):
-    __tablename__ = 'closed_days'
+    __tablename__ = 'ClosedDays'
     GalleryID = db.Column(db.Integer, db.ForeignKey('gallery.GalleryID'), primary_key=True)
     ClosedDay = db.Column(db.String(10), primary_key=True)
 
 # Association tables for many-to-many relationships
-CreateArt = db.Table('create_art',
+CreateArt = db.Table('CreateArt',
     db.Column('ArtistID', db.Integer, db.ForeignKey('artist.ArtistId'), primary_key=True),
     db.Column('ArtworkID', db.Integer, db.ForeignKey('artwork.ArtworkID'), primary_key=True)
 )
 
-Display = db.Table('display',
+Display = db.Table('Display',
     db.Column('ArtworkID', db.Integer, db.ForeignKey('artwork.ArtworkID'), primary_key=True),
     db.Column('ExhibitionID', db.Integer, db.ForeignKey('exhibition.ExhibitionID'), primary_key=True)
 )
 
-Schedule = db.Table('schedule',
+Schedule = db.Table('Schedule',
     db.Column('GalleryID', db.Integer, db.ForeignKey('gallery.GalleryID'), primary_key=True),
     db.Column('ExhibitionID', db.Integer, db.ForeignKey('exhibition.ExhibitionID'), primary_key=True)
 )
 
-UserReviews = db.Table('user_reviews',
+UserReviews = db.Table('Review_Commments',
     db.Column('UserID', db.Integer, db.ForeignKey('user.UId'), primary_key=True),
     db.Column('ArtworkID', db.Integer, db.ForeignKey('artwork.ArtworkID'), primary_key=True)
 )

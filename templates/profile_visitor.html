@@ -58,6 +58,11 @@
         list-style: none;
         padding: 0;
     }
+    .artwork-list img {
+        height: 200px; /* Set the desired height for the images */
+        object-fit: cover; /* Maintain aspect ratio and fill the container */
+    }
+
     .artwork-list ul li {
         padding: 10px 0;
         border-bottom: 1px solid #eee;
@@ -79,7 +84,7 @@
             <li><span class="label">Phone:</span> {{ visitor.PhoneNumber }}</li>
             <li><span class="label">Email:</span> {{ visitor.Email }}</li>
             <li><span class="label">Address:</span> {{ visitor.Address }}</li>
-            <li><span class="label">Digital Wallet:</span> {{ user.DigitalWallet }}</li>
+            <li><span class="label">Digital Wallet:</span> ${{ visitor.DigitalWallet}}</li>
         </ul>
     </div>
     <div class="artwork-list">
@@ -106,3 +111,35 @@
 </body>
 </html>
 
+<!-- <body>
+    <h1>Click the button to get the most bought artwork from this user's inventory</h1>
+    <button id="executeButton">Execute</button>
+
+    Notification Pane
+    <div id="notificationPane" style="display:none; position:fixed; top:20px; right:20px; background:lightgrey; padding:15px; border-radius:5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+        <span id="notificationMessage"></span>
+        <button onclick="document.getElementById('notificationPane').style.display='none'">Close</button>
+    </div>
+
+    <script>
+        document.getElementById('executeButton').addEventListener('click', function() {
+            fetch('/execute-python-function', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())  // Expecting a text response
+            .then(text => {
+                document.getElementById('notificationMessage').textContent = text;
+                document.getElementById('notificationPane').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('notificationMessage').textContent = 'Error: ' + error;
+                document.getElementById('notificationPane').style.display = 'block';
+            });
+        });
+    </script>
+    
+</body> -->

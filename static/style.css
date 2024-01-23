@@ -13,19 +13,18 @@ body {
 .welcome-container {
     background-color: rgb(227, 95, 23);
     background-size: cover;
-    padding: 50px;
+    padding: 60px;
     color: navajowhite;
 }
 
 .welcome-container {
     background-size: cover;
-    padding: 50px;
+    padding: 55px;
     color: navajowhite;
 }
 
-.navigation a,
-.directory a {
-    margin: 40px;
+.navigation a, .directory a {
+    margin: 50px;
     color: navajowhite;
     text-decoration: none;
 }
@@ -138,28 +137,34 @@ body {
 
 .artwork-column {
     display: grid;
-    grid-template-rows: auto auto 1fr;
-    /* Three rows: image, rating, comments */
+    grid-template-rows: auto auto 1fr; /* Three rows: image, rating, comments */
     gap: 10px;
 }
 
 .artwork-item img {
     width: 100%;
     height: auto;
-    max-height: 1000px;
-    /* Maximum height for the image */
-    object-fit: cover;
-    /* Resize image to fill the container */
+    max-height: 1000px; /* Maximum height for the image */
+    object-fit: cover; /* Resize image to fill the container */
 }
 
-.artwork-rating,
-.artwork-comments {
+.artwork-rating, .artwork-comments {
     background-color: #f4f4f4;
     padding: 10px;
     border-radius: 5px;
 }
 
-.artwork-details {
+.artwork-comments ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.artwork-comments li {
+    margin-bottom: 5px;
+}
+
+
+/* .artwork-details {
     text-align: center;
     padding: 20px;
 }
@@ -168,7 +173,31 @@ body {
     width: 50%;
     height: auto;
     border-radius: 8px;
+} */
+
+.artwork-detail-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
+
+.artwork-detail-container img.artwork-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.artwork-detail-container p {
+    text-align: left;
+    line-height: 1.6;
+}
+
+/* Further styling as needed */
+
 
 /* Additional styling as needed */
 .auth-form-container {
@@ -215,3 +244,4 @@ body {
 .auth-form-container button[type="submit"]:hover {
     background-color: #3949AB;
 }
+
