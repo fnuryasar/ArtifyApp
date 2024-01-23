@@ -77,6 +77,7 @@ def artworks():
                            artworks=artworks_data, 
                            basket_artworks=basket_artwork_details, 
                            total_price=total_price)
+
 ## Artist Details Page:
 # SELECT FullName, UserName, Style, Bio FROM Artist, User WHERE Artist.ArtistID = artist_id AND User.UId = artist_id;
 # SELECT ATitle, AStyle, Image, Description FROM Artwork WHERE ArtworkID IN (SELECT ArtworkID FROM CreateArt WHERE ArtistID = artist_id);
@@ -117,23 +118,6 @@ def add_to_basket():
     session.modified = True
 
     return redirect(url_for('artworks'))
-
-
-@app.route('/add_to_basket', methods=['POST'])
-def add_to_basket():
-    artwork_id = request.form.get('artwork_id')
-    if 'basket' not in session:
-        session['basket'] = []
-
-    # Check if the artwork_id is not already in the basket
-    if artwork_id not in session['basket']:
-        session['basket'].append(artwork_id)
-
-    # Mark the session as modified
-    session.modified = True
-
-    return redirect(url_for('artworks'))
-
 
 @app.route('/logout')
 def logout():
@@ -290,22 +274,12 @@ def your_python_function(user_id):
     cursor.close()
     return result
 
-@app.route('/view_basket')
-def view_basket():
-    if 'logged_in' not in session or not session['logged_in']:
-        return redirect(url_for('login'))
-
-    basket_artwork_details = get_basket_artwork_details(session.get('basket', []))
-    total_price = sum(artwork['Price'] for artwork in basket_artwork_details)
-
-    return render_template('basket.html', basket_artworks=basket_artwork_details, total_price=total_price)
-
 def get_basket_artwork_details(basket_ids):
     if not basket_ids:
         return []
 
     query = """
-SELECT ATitle, Price FROM Artwork
+SELECT ArtworkID, ATitle, Price FROM Artwork
 WHERE ArtworkID IN (%s)
 """ % ','.join(['%s'] * len(basket_ids))
 

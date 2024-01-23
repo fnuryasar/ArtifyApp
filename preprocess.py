@@ -9,7 +9,7 @@ def convert_image_to_binary(filename):
 connection = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="bateman35",
+    passwd="admin",
     database='Artify'
 )
 cursor = connection.cursor()
