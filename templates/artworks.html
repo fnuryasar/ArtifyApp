@@ -9,25 +9,25 @@
 </head>
 
 <body>
-       <!-- Basket View Section -->
+    <!-- Basket View Section -->
     <div class="basket-view">
         <h2>Your Basket</h2>
         <div class="basket-items">
             {% if basket_artworks %}
-            {% for artwork in basket_artworks %}
-            <div class="basket-item">
-                <div class="basket-item img">
-                    <img src="{{ url_for('static', filename='Artworks/' + artwork['ArtworkID']|string + '.jpg') }}">
-                </div>
-                <div class="basket-artwork-details">
-                    <p class="basket-artwork-title">{{ artwork['ATitle'] }}</p>
-                    <p class="basket-artwork-price">Price: ${{ artwork['Price'] }}</p>
-                </div>
-                <!-- Potentially add a remove button here -->
-            </div>
-            {% endfor %}
+                {% for artwork in basket_artworks %}
+                    <div class="basket-item">
+                        <div class="basket-item-img">
+                            <img src="{{ url_for('static', filename='Artworks/' + artwork['ArtworkID']|string + '.jpg') }}">
+                        </div>
+                        <div class="basket-artwork-details">
+                            <p class="basket-artwork-title">{{ artwork['ATitle'] }}</p>
+                            <p class="basket-artwork-price">Price: ${{ artwork['Price'] }}</p>
+                        </div>
+                        <!-- Potentially add a remove button here -->
+                    </div>
+                {% endfor %}
             {% else %}
-            <p>Your basket is empty.</p>
+                <p>Your basket is empty.</p>
             {% endif %}
         </div>
         <div class="basket-summary">
@@ -37,13 +37,15 @@
             <button onclick="">Checkout</button>
         </div>
     </div>
+
+    <!-- Artwork Grid Section -->
     <div class="artwork-grid">
         {% for artwork in artworks %}
             <div class="artwork-column">
                 <div class="artwork-item">
                     <a href="{{ url_for('artwork_details', artwork_id=artwork['artwork_id']) }}">
                         <img src="{{ url_for('static', filename='Artworks/' + artwork['artwork_id']|string + '.jpg') }}" alt="{{ artwork['artwork_title'] }}">
-                          <h3>{{ artwork['artwork_title'] }}</h3>
+                        <h3>{{ artwork['artwork_title'] }}</h3>
                     </a>
                 </div>
                 <div class="artwork-rating">
@@ -64,29 +66,9 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="artwork-rating">
-                <p>Average Rating: {{ artwork.average_rating }}</p>
-            </div>
-            <div class="artwork-comments">
-                {% for comment in artwork.comments %}
-                <p>
-                    {% if comment.is_artist %}
-                    <a href="{{ url_for('artist_details', artist_id=comment.artist_id) }}" style="color: blue;">
-                        {{ comment.user_name }}
-                    </a>
-                    {% else %}
-                    {{ comment.user_name }}
-                    {% endif %}:
-                    {{ comment.comment }}
-                </p>
-                {% endfor %}
-            </div>
-        </div>
         {% endfor %}
     </div>
 
-
 </body>
-
 
 </html>

@@ -126,27 +126,44 @@ body {
     /* Rest of the button styling */
 }
 
-.artwork-grid {
+/* .artwork-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    /* Three columns */
     gap: 20px;
     align-items: start;
-    /* Aligns content at the top */
 }
 
 .artwork-column {
     display: grid;
-    grid-template-rows: auto auto 1fr; /* Three rows: image, rating, comments */
+    grid-template-rows: auto auto 1fr; 
     gap: 10px;
 }
 
 .artwork-item img {
     width: 100%;
     height: auto;
-    max-height: 1000px; /* Maximum height for the image */
-    object-fit: cover; /* Resize image to fill the container */
+    max-height: 1000px; 
+    object-fit: cover; 
+} */
+
+
+.artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Adjust to your desired number of columns */
+    gap: 20px;
 }
+
+.artwork-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.artwork-item img {
+    width: 100%;
+    height: auto;
+    max-height: 1000px; 
+    object-fit: cover; }
 
 .artwork-rating, .artwork-comments {
     background-color: #f4f4f4;
