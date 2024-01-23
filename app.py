@@ -1,4 +1,5 @@
 ##### START IMPORTS #####
+from datetime import date
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
@@ -106,8 +107,8 @@ def artworks():
     
     basket_ids = session.get('basket', [])
     basket_artwork_details = get_basket_artwork_details(basket_ids)
-    total_price = sum(artwork['Price'] for artwork in basket_artwork_details)
-
+    total_price = sum(artwork.Price for artwork in basket_artwork_details)
+    session['total_basket'] = total_price
 
     return render_template('artworks.html', 
                            artworks=artworks_data, 
@@ -150,6 +151,21 @@ def artwork_details(artwork_id):
 
     return render_template('artwork_details.html', artwork=artwork, gallery=gallery, artist_details=artist_details, exhibition_titles=exhibition_titles, sold_info=sold_info)
 
+@app.route('/remove_from_basket', methods=['POST'])
+def remove_from_basket():
+    artwork_id = request.form.get('artwork_id')
+    if 'basket' not in session:
+        session['basket'] = []
+
+    # Check if the artwork_id is in the basket and remove it
+    if artwork_id in session['basket']:
+        session['basket'].remove(artwork_id)
+
+    # Mark the session as modified
+    session.modified = True
+
+    return redirect(url_for('artworks'))
+
 
 @app.route('/add_to_basket', methods=['POST'])
 def add_to_basket():
@@ -182,7 +198,6 @@ def profile():
     user.is_artist = check_user_id(user_id) 
 
     cursor = connection.cursor()
-    cursor.execute("UPDATE Artwork SET VisitorID = 3, IsSold = 1 WHERE ArtworkID = 5")
     cursor.close()
 
     cursor = connection.cursor()
@@ -321,17 +336,63 @@ def get_basket_artwork_details(basket_ids):
     if not basket_ids:
         return []
 
-    query = """
-SELECT ArtworkID, ATitle, Price FROM Artwork
-WHERE ArtworkID IN (%s)
-""" % ','.join(['%s'] * len(basket_ids))
+    # Directly query the Artwork model
+    artworks_in_basket = Artwork.query.filter(Artwork.ArtworkID.in_(basket_ids)).all()
+    return artworks_in_basket
 
 
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(query, basket_ids)
-    artworks = cursor.fetchall()
-    cursor.close()
-    return artworks
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    user_id = session.get('user_id')
+    if user_id:
+        try:
+            success, message = process_checkout(user_id)  # Unpack the tuple
+            return jsonify({'success': success, 'message': message})
+        except Exception as e:
+            return jsonify({'success': False, 'message': 'An error occurred: ' + str(e)})
+    else:
+        return jsonify({'success': False, 'message': 'User not logged in.'})
+
+
+def process_checkout(user_id):
+    basket_ids = session.get('basket', [])
+    if not basket_ids:
+        return False, "Basket is empty."
+
+    basket_artwork_details = get_basket_artwork_details(basket_ids)
+    total_price = sum(artwork.Price for artwork in basket_artwork_details)
+    
+    visitor = Visitor.query.get(user_id)
+    if visitor is None:
+        return False, "User not found."
+
+    wallet_balance = visitor.DigitalWallet
+    if wallet_balance < total_price:
+        return False, "Insufficient funds in digital wallet."
+
+    if basket_artwork_details:
+        for artwork in basket_artwork_details:
+            if artwork.VisitorID is not None:
+                return False, "Your basket contains already sold artwork(s)."
+            
+            artwork.IsSold = True
+            artwork.SaleDate = date.today()
+            artwork.VisitorID = user_id
+
+        # Update the user's wallet balance
+        
+        visitor.DigitalWallet -= total_price
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Empty the basket after successful purchase
+        session['basket'] = []
+
+        return True, "Checkout successful."
+    else:
+        return False, "No items in the basket to checkout."
+
 
 
 if __name__ == '__main__':
